@@ -7,4 +7,6 @@
 		'(lambda nil
 		   (interactive)
 		   (save-buffer)
-		   (compile "make -C ~/Work/Study/in-haste/")))))
+		   (compile "make -C ~/Work/Study/in-haste/"))))
+ (haskell-mode
+  (flycheck-haskell-hlint-executable . "hlint --cpp-define=HLINT=true")))

@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 module Virtual (
   vnode,
   vtext,
@@ -27,6 +29,7 @@ newtype HTMLPatch = HTMLPatch (JSRef Patch)
 makeTreeState :: JSRef DOMNode -> HTML -> TreeState
 makeTreeState n t= TreeState { _node = n, _tree = t}
 
+#ifndef HLINT
 foreign import javascript unsafe
   "document.body" documentBody :: IO (JSRef DOMNode)
 
@@ -50,6 +53,7 @@ foreign import javascript safe
 
 foreign import javascript safe
   "patch($1, $2)" patch_ :: JSRef DOMNode -> JSRef Patch -> IO (JSRef DOMNode)
+#endif
 
 vnode :: String -> [HTML] -> HTML
 vnode tag children = HTML $ vnode_ (toJSString tag) (unsafePerformIO (toArray (map f children)))
