@@ -1,0 +1,16 @@
+{
+  "name": "gitdash-purescript",
+  "version": "0.0.0",
+  "description": "",
+  "dependencies": {
+    "virtual-hyperscript": "~4.6.0",
+    "dom-delegator": "~11.0.0"
+  },
+  "devDependencies": {
+    "browserify": "~6.3.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": ""
+}
