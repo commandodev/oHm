@@ -1,7 +1,6 @@
-module Render (
-  rootView) where
+module Render (rootView) where
 
-import Browser
+import Virtual
 
 rootView :: (Int,Int) -> HTML
 rootView state = vtext "div" (show state)

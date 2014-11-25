@@ -1,21 +1,15 @@
-module Browser (
+module Virtual (
   vnode,
   vtext,
   documentBody,
   appendChild,
   createDOMNode,
-  diff,
-  patch,
+  renderSetup,
   rerender,
-  DOMNode(),
   TreeState(),
   makeTreeState,
   HTML()) where
 
--- import GHCJS.DOM
--- import GHCJS.DOM.Document
--- import GHCJS.DOM.Element
--- import GHCJS.DOM.Node
 import GHCJS.Foreign
 import GHCJS.Types
 
@@ -54,7 +48,7 @@ foreign import javascript safe
 
 vnode :: String -> [HTML] -> HTML
 vnode tag children = HTML $ vnode_ (toJSString tag) (unsafePerformIO (toArray (map f children)))
-                     where f (HTML a) = a
+  where f (HTML a) = a
 
 vtext :: String -> String -> HTML
 vtext tag text = HTML $ vtext_ (toJSString tag) (toJSString text)
@@ -74,3 +68,11 @@ rerender render x (TreeState {_node = oldNode, _tree = oldTree}) = do
       patches = diff oldTree newTree
   newNode <- patch oldNode patches
   return (makeTreeState newNode newTree)
+
+renderSetup :: (a -> HTML) -> a -> IO TreeState
+renderSetup render x = do
+  body <- documentBody
+  let tree = render x
+      node = createDOMNode tree
+  _ <- appendChild body node
+  return $ makeTreeState node tree
