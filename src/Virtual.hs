@@ -1,6 +1,7 @@
 module Virtual (
   vnode,
   vtext,
+  vbutton,
   documentBody,
   appendChild,
   createDOMNode,
@@ -11,6 +12,7 @@ module Virtual (
   HTML()) where
 
 import GHCJS.Foreign
+import GHCJS.Marshal
 import GHCJS.Types
 
 import System.IO.Unsafe
@@ -35,6 +37,9 @@ foreign import javascript unsafe
   "h($1, {}, $2)" vnode_ :: JSString -> JSArray VNode -> JSRef VNode
 
 foreign import javascript unsafe
+  "h('button', {'ev-click': $1}, $2)" vbutton_ :: JSFun (JSRef a -> IO ()) -> JSString -> JSRef VNode
+
+foreign import javascript unsafe
   "h($1, $2)" vtext_ :: JSString -> JSString -> JSRef VNode
 
 foreign import javascript unsafe
@@ -49,6 +54,10 @@ foreign import javascript safe
 vnode :: String -> [HTML] -> HTML
 vnode tag children = HTML $ vnode_ (toJSString tag) (unsafePerformIO (toArray (map f children)))
   where f (HTML a) = a
+
+vbutton :: (JSRef a -> IO ()) -> String -> HTML
+vbutton f s = HTML $ vbutton_ f' (toJSString s)
+  where f' = unsafePerformIO $ syncCallback1 AlwaysRetain True f
 
 vtext :: String -> String -> HTML
 vtext tag text = HTML $ vtext_ (toJSString tag) (toJSString text)

@@ -1,10 +1,10 @@
+{-# language ExtendedDefaultRules #-}
+{-# language OverloadedStrings #-}
+
 module Main where
 
 import Render
 import Virtual
-
-initialState :: (Int,Int)
-initialState = (0,0)
 
 main :: IO TreeState
 main = do
