@@ -9,16 +9,9 @@ rootView send state =
         [vnode "nav.navbar.navbar-default" [vtext "div.navbar-brand" "Demo"]
         ,vnode "div.row"
                [vnode "div.col-md-3"
-                      [vbutton "button.btn.btn-primary"
-                               (\_ ->
-                                  send (IncFst 5))
-                               "+(5, 0)"
-                      ,vbutton "button.btn.btn-primary"
-                               (\_ ->
-                                  send (IncSnd 3))
-                               "+(0, 3)"
-                      ,vbutton "button.btn.btn-primary"
-                               (\_ ->
-                                  send (DecBoth 10))
-                               "-(10, 10)"]
+                      [msgButton (IncFst 5) "+(5, 0)"
+                      ,msgButton (IncSnd 3) "+(0, 3)"
+                      ,msgButton (DecBoth 5) "-(10, 10)"]
                ,vnode "div.col-md-9.well" [vtext "div" (show state)]]]
+  where msgButton msg text =
+          vbutton "button.btn.btn-primary" (\_ -> send msg) text
