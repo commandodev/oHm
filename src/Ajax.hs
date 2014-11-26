@@ -16,6 +16,7 @@ foreign import javascript unsafe
   "$r = new XMLHttpRequest();\
 " xhr_ :: IO (JSRef XHR)
 
+-- TODO There's a retain issue here.  $1 can have been cleaned up by the time $c is called.
 foreign import javascript interruptible
   "$1.onreadystatechange = function () {\
      if ($1.readyState === 4) {\
