@@ -22,7 +22,7 @@ handler view worldState tree =
        rerender view newVal tree
 
 sendMessage :: Output Message -> Message -> IO ()
-sendMessage output msg = atomically $ send output msg >> return ()
+sendMessage output msg = atomically $ void $ send output msg
 
 main :: IO ()
 main =
