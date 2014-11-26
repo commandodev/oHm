@@ -35,7 +35,13 @@ be extracted into their own library.
 ** Building
 
 1. Ensure you have ghcjs installed.
-3. =make=
+2. =make=
+
+** Work To Do
+
+- [ ] Demonstrate Forms
+- [ ] Demonstrate Networking
+- [ ] Use Lucid for DOM-generation.
 
 ** License
 
