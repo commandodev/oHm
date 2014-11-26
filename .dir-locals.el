@@ -6,6 +6,7 @@
 		(kbd "M-e")
 		'(lambda nil
 		   (interactive)
+		   (require 'magit)
 		   (save-buffer)
 		   (compile (format "make -C %s" (magit-get-top-dir))))))
  (haskell-mode
