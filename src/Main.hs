@@ -1,12 +1,12 @@
 module Main where
 
-import Render
-import Virtual
-import Control.Monad
 import Control.Concurrent.STM
+import Control.Monad
+import Messages
 import Pipes
 import Pipes.Concurrent
-import Messages
+import Render
+import Virtual
 
 swap :: TVar a -> (a -> a) -> STM a
 swap a f = modifyTVar a f >> readTVar a
