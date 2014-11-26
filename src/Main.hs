@@ -11,25 +11,25 @@ import Messages
 swap :: TVar a -> (a -> a) -> STM a
 swap a f = modifyTVar a f >> readTVar a
 
-handler :: TVar World -> (World -> HTML) -> TreeState -> Consumer Message IO ()
-handler atom view tree =
+handler :: (World -> HTML) -> TVar World -> TreeState -> Consumer Message IO ()
+handler view worldState tree =
   forever $
   do msg <- await
      newVal <- lift $
                atomically $
-               swap atom (process msg)
+               swap worldState (process msg)
      lift $
        rerender view newVal tree
 
 main :: IO ()
 main =
-  do (atom,val) <- atomically $
+  do (worldState,val) <- atomically $
                    do let val = (0,0)
-                      atom <- newTVar val
-                      return (atom,val)
+                      worldState <- newTVar val
+                      return (worldState,val)
      (output,input) <- spawn (Bounded 10)
-     initialTree <- renderSetup (rootView output)
-                                val
+     let renderer = rootView output
+     initialTree <- renderSetup renderer val
      runEffect $
        fromInput input >->
-       handler atom (rootView output) initialTree
+       handler renderer worldState initialTree
