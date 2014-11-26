@@ -1,6 +1,6 @@
 FINAL_JS=Main.jsexe/all.js
 JS_DEPS=src/deps.js
-GHCJS_SOURCE_FILES=src/Virtual.hs src/Render.hs src/Main.hs
+GHCJS_SOURCE_FILES=src/Virtual.hs src/Render.hs src/Main.hs src/Messages.hs
 VENDOR=build/vendor.js
 
 all: $(FINAL_JS)

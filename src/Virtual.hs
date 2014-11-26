@@ -4,20 +4,18 @@ module Virtual (
   vnode,
   vtext,
   vbutton,
-  documentBody,
-  appendChild,
-  createDOMNode,
   renderSetup,
   rerender,
   TreeState(),
   makeTreeState,
-  HTML()) where
+  HTML()
+  ) where
 
 import GHCJS.Foreign
 import GHCJS.Marshal
 import GHCJS.Types
 
-import System.IO.Unsafe
+import System.IO.Unsafe -- TODO This is, of course, bad.
 
 data VNode
 data DOMNode
