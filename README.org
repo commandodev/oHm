@@ -17,7 +17,7 @@ important separation in the design.
 
 Look at [[=src/Virtual.hs=][Virtual]]. This is a library of functions for creating
 a ReactJS-style virtual DOM, and applying it as the state of the world
-changes.
+changes. Efficient, functional rendering.
 
 Finally, [[=src/Main.hs=][Main]] wires everything together, ensure that the
 world is rendered and re-rendered as new messages advance the state of
@@ -25,11 +25,12 @@ the world.
 
 *** So...
 
-In a real app, the first two files would likely change vastly. They
-define what the app can do, and what it looks like.
+In a real app, the first two files would likely change vastly.
+This is where development effort would be spent: defining what to do,
+and how to display it.
 
-The last two would remain the same, and will eventually be extracted into
-their own library.
+The last two files should remain roughly the same, and will eventually
+be extracted into their own library.
 
 ** Building
 
