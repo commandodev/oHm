@@ -7,17 +7,17 @@ BOOTSTRAP=node_modules/twitter-bootstrap-3.0.0/dist/css/bootstrap.min.css
 all: site
 
 site: $(ALL_JS) $(BOOTSTRAP)
-	-mkdir dist
+	mkdir -p dist
 	cp $(BOOTSTRAP) dist/
 	cp src/index.html dist/
 	cp $(ALL_JS) dist/
 
 $(BOOTSTRAP):
-	-mkdir node_modules
+	mkdir -p node_modules
 	npm install
 
 $(VENDOR): $(JS_DEPS)
-	-mkdir build
+	mkdir -p build
 	browserify $(JS_DEPS) -o $(VENDOR)
 
 $(ALL_JS): $(VENDOR) $(GHCJS_SOURCE_FILES)
