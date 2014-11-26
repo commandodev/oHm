@@ -7,3 +7,4 @@
 *.js_o
 *.js_hi
 /build/
+/.cabal-deps

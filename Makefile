@@ -12,6 +12,10 @@ site: $(ALL_JS) $(BOOTSTRAP)
 	cp src/index.html dist/
 	cp $(ALL_JS) dist/
 
+.cabal-deps: bellringer.cabal
+	cabal install --ghcjs
+	touch .cabal-deps
+
 $(BOOTSTRAP):
 	mkdir -p node_modules
 	npm install
@@ -20,7 +24,7 @@ $(VENDOR): $(JS_DEPS)
 	mkdir -p build
 	browserify $(JS_DEPS) -o $(VENDOR)
 
-$(ALL_JS): $(VENDOR) $(GHCJS_SOURCE_FILES)
+$(ALL_JS): $(VENDOR) .cabal-deps $(GHCJS_SOURCE_FILES)
 	ghcjs -Wall \
 	  -O3 \
 	  -o Main \
