@@ -1,5 +1,3 @@
-{-# LANGUAGE CPP #-}
-
 module Render (rootView) where
 
 import Messages
