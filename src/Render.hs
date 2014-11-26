@@ -1,20 +1,10 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE ExtendedDefaultRules #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 module Render (rootView) where
 
-import Pipes
 import Pipes.Concurrent
 import Messages
-import GHCJS.Types
 import Virtual
-
-#ifndef HLINT
-foreign import javascript unsafe
-  "console.log($1)" consoleLog :: JSString -> IO ()
-#endif
 
 div_ :: [HTML] -> HTML
 div_ = vnode "div"

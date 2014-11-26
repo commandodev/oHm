@@ -1,7 +1,3 @@
-{-# language ExtendedDefaultRules #-}
-{-# language OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
-
 module Main where
 
 import Render
@@ -21,7 +17,7 @@ handler atom view tree = forever $ do
      newVal <- lift $ atomically $ swap atom (process msg)
      lift $ rerender view newVal tree
 
-main :: IO TreeState
+main :: IO ()
 main =
   do (atom,val) <- atomically $
                    do let val = (0,0)
@@ -30,5 +26,4 @@ main =
      (output,input) <- spawn (Bounded 10)
      tree <- renderSetup (rootView output)
                          val
-     _ <- runEffect $ fromInput input >-> handler atom (rootView output) tree
-     return tree
+     runEffect $ fromInput input >-> handler atom (rootView output) tree

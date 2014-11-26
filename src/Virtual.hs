@@ -12,7 +12,6 @@ module Virtual (
   ) where
 
 import GHCJS.Foreign
-import GHCJS.Marshal
 import GHCJS.Types
 
 import System.IO.Unsafe -- TODO This is, of course, bad.
