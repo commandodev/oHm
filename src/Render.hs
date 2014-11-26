@@ -13,9 +13,18 @@ rootView :: (Output Message) -> (Int,Int) -> HTML
 rootView output state =
   vnode "div.container"
         [vnode "nav.navbar.navbar-default" [vtext "div.navbar-brand" "Demo"]
-        ,vnode "div"
-               [vbutton "button.btn.btn-primary" click1 "+(5, 0)"
-               ,vbutton "button.btn.btn-primary" click2 "+(0, 3)"]
-        ,vnode "div.well" [vtext "div" (show state)]]
-  where click1 _ = sendMessage output (IncFst 5)
-        click2 _ = sendMessage output (IncSnd 3)
+        ,vnode "div.row"
+               [vnode "div.col-md-3"
+                      [vbutton "button.btn.btn-primary" onclick1 "+(5, 0)"
+                      ,vbutton "button.btn.btn-primary" onclick2 "+(0, 3)"
+                      ,vbutton "button.btn.btn-primary" onclick3 "-(10, 10)"]
+               ,vnode "div.col-md-9.well" [vtext "div" (show state)]]]
+  where onclick1 _ =
+          sendMessage output
+                      (IncFst 5)
+        onclick2 _ =
+          sendMessage output
+                      (IncSnd 3)
+        onclick3 _ =
+          sendMessage output
+                      (DecBoth 10)
