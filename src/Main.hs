@@ -27,9 +27,9 @@ sendMessage output msg = atomically $ send output msg >> return ()
 main :: IO ()
 main =
   do (worldState,val) <- atomically $
-                   do let val = (0,0)
-                      worldState <- newTVar val
-                      return (worldState,val)
+                         do let val = (0,0)
+                            worldState <- newTVar val
+                            return (worldState,val)
      (output,input) <- spawn (Bounded 10)
      let renderer = rootView (sendMessage output)
      initialTree <- renderSetup renderer val
