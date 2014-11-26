@@ -2,17 +2,18 @@
 
 ** Orientation
 
+*** Specific To This App
 Start with =src/Messages.hs=. This defines the state of the front-end
 (the =World=), and the possible operations on it =process=. The front
-end changes by =Message=s coming in and moving this state of the world forward.
+end changes by =Messages= coming in, being processed and moving the
+state of the =World= forward.
 
 Next look at =src/Render.hs=. This knows 2 things: how to turn the
 =World= into a DOM, and how to give the user the ability to generate
 =Messages=. It _does not_ know how to process messages, and that's an
 important separation in the design.
 
-That's it for the parts that make this app what it is. Next look at
-the reusable structure...
+*** Reusable Structure
 
 Look at =src/Virtual.hs=. This is a library of functions for creating
 a ReactJS-style virtual DOM, and applying it as the state of the world
@@ -21,6 +22,12 @@ changes.
 Finally, =src/Main.hs= wires everything together, ensure that the
 world is rendered and re-rendered as new messages advance the state of
 the world.
+
+*** So...
+
+In a real app, the first two files would likely change vastly. The
+last two would remain the same, and will eventually be extracted into
+their own library.
 
 ** Building
 
