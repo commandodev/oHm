@@ -11,7 +11,7 @@ rootView send state =
                [vnode "div.col-sm-3"
                       [msgButton (IncFst 5) "+(5, 0)"
                       ,msgButton (IncSnd 3) "+(0, 3)"
-                      ,msgButton (DecBoth 5) "-(10, 10)"]
+                      ,msgButton (DecBoth 10) "-(10, 10)"]
                ,vnode "div.col-sm-9" [vtext "div.well" (show state)]]]
   where msgButton msg text =
           vbutton "button.btn.btn-primary" (\_ -> send msg) text
