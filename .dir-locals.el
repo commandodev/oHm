@@ -7,6 +7,6 @@
 		'(lambda nil
 		   (interactive)
 		   (save-buffer)
-		   (compile "make -C ~/Work/Study/in-haste/"))))
+		   (compile (format "make -C %s" (magit-get-top-dir))))))
  (haskell-mode
   (flycheck-haskell-hlint-executable . "hlint --cpp-define=HLINT=true")))
