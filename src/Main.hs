@@ -21,6 +21,9 @@ handler view worldState tree =
      lift $
        rerender view newVal tree
 
+sendMessage :: Output Message -> Message -> IO ()
+sendMessage output msg = atomically $ send output msg >> return ()
+
 main :: IO ()
 main =
   do (worldState,val) <- atomically $
@@ -28,7 +31,7 @@ main =
                       worldState <- newTVar val
                       return (worldState,val)
      (output,input) <- spawn (Bounded 10)
-     let renderer = rootView output
+     let renderer = rootView (sendMessage output)
      initialTree <- renderSetup renderer val
      runEffect $
        fromInput input >->
