@@ -8,3 +8,7 @@
 *.js_hi
 /build/
 /.cabal-deps
+result
+nixpkgs
+\#*
+\.\#*
