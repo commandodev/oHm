@@ -13,7 +13,7 @@ site: $(ALL_JS) $(BOOTSTRAP)
 	cp $(ALL_JS) dist/
 
 .cabal-deps: bellringer.cabal
-	cabal install --ghcjs
+	cabal install --only-dependencies --ghcjs
 	touch .cabal-deps
 
 $(BOOTSTRAP):
