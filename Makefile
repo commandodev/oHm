@@ -1,6 +1,6 @@
 ALL_JS=Main.jsexe/all.js
 JS_DEPS=src/deps.js
-GHCJS_SOURCE_FILES=src/Virtual.hs src/Render.hs src/Main.hs src/Messages.hs src/Ajax.hs
+GHCJS_SOURCE_FILES=src/Virtual.hs src/Render.hs src/Main.hs src/Messages.hs src/Ajax.hs src/HTML.hs
 VENDOR=build/vendor.js
 BOOTSTRAP=node_modules/twitter-bootstrap-3.0.0/dist/css/bootstrap.min.css
 

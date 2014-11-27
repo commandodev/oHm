@@ -1,27 +1,25 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Render (rootView) where
 
-import Prelude hiding (id)
+import Prelude hiding (id,span)
 
 import Messages
 import Virtual
+import HTML
 
 userView :: Pending User -> HTML
-userView NotRequested = vtext "div.well" "No user loaded yet. (Press the AJAX button!)"
-userView NotFound = vtext "div.well" "User not found. Sadness."
-userView Loading = vtext "div.well" "Loading user...please wait."
+userView NotRequested = span "No user loaded yet. (Press the AJAX button!)"
+userView NotFound = span "User not found. Sadness."
+userView Loading = span "Loading user...please wait."
 userView (Loaded user) =
-  vnode "table.table"
-        [vnode "tr"
-               [vnode "th" [vtext "span" "ID"]
-               ,vnode "th" [vtext "span" "Login"]
-               ,vnode "th" [vtext "span" "Name"]
-               ,vnode "th" [vtext "span" "Email"]]
-        ,vnode "tr"
-               [vnode "td" [vtext "span" (show (id user))]
-               ,vnode "td" [vtext "span" (login user)]
-               ,vnode "td" [vtext "span" (name user)]
-               ,vnode "td" [vtext "span" (email user)]]]
+  table [tr [th [span "ID"]
+            ,th [span "Login"]
+            ,th [span "Name"]
+            ,th [span "Email"]]
+        ,tr [td [span (show (id user))]
+            ,td [span (login user)]
+            ,td [span (name user)]
+            ,td [span (email user)]]]
 
 controls :: (Message -> IO ()) -> HTML
 controls send =
@@ -35,9 +33,5 @@ controls send =
 
 rootView :: (Message -> IO ()) -> World -> HTML
 rootView send (a,b,user) =
-  vnode "div.container"
-        [vnode "nav.navbar.navbar-default" [vtext "div.navbar-brand" "Demo"]
-        ,vnode "div.row"
-               [vnode "div.col-sm-3" [controls send]
-               ,vnode "div.col-sm-9"
-                      [vtext "div.well" (show (a,b)),userView user]]]
+  container [navbar [vtext "div.navbar-brand" "Demo"]
+            ,row [col3 [controls send],col9 [well [span (show (a,b))],well [userView user]]]]
