@@ -1,15 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Messages where
-
 import Ajax
-import Control.Applicative
 import Control.Monad
 import Data.Aeson
--- Aeson's "encode" to json generates lazy bytestrings
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Pipes.Concurrent
+import GHC.Generics (Generic)
 
 data Pending a
   = NotRequested
@@ -20,16 +20,14 @@ data Pending a
 type World = (Int,Int,Pending User)
 
 data User =
-  User {login :: String
-       ,name :: String
+  User {login :: !String
+       ,name :: !String
        ,email :: String
        ,id :: Integer}
-  deriving (Eq,Show)
+  deriving (Show,Generic)
 
-instance FromJSON User where
-  parseJSON (Object v) = User <$> v .: "login" <*> v .: "name" <*> v .: "email" <*>
-                         v .: "id"
-  parseJSON _ = mzero
+instance FromJSON User
+instance ToJSON User
 
 data Message
   = IncFst Int
