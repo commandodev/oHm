@@ -58,7 +58,7 @@ queue (IncBoth x y) output = atomically $ send output (IncFst x) >> send output 
 
 queue FetchAjax output =
   do _ <- atomically (send output AjaxPending)
-     (output2,input2) <- (spawn Single)::IO (Output String, Input String)
+     (output2,input2) <- spawn Single
      _ <- get "https://api.github.com/users/boothead" output2
      _ <- forkIO $
           void $
