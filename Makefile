@@ -6,6 +6,10 @@ BOOTSTRAP=node_modules/twitter-bootstrap-3.0.0/dist/css/bootstrap.min.css
 
 all: site
 
+minified: $(ALL_JS)
+	node_modules/closurecompiler/bin/ccjs  $(ALL_JS) --compilation_level=ADVANCED_OPTIMIZATIONS > dist/all.min.js
+	gzip --best -k dist/all.min.js
+
 site: $(ALL_JS) $(BOOTSTRAP)
 	mkdir -p dist
 	cp $(BOOTSTRAP) dist/

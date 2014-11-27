@@ -5,7 +5,8 @@
   "dependencies": {
     "virtual-hyperscript": "~4.6.0",
     "dom-delegator": "~11.0.0",
-    "twitter-bootstrap-3.0.0": "~3.0.0"
+    "twitter-bootstrap-3.0.0": "~3.0.0",
+    "closurecompiler": "~1.5.1"
   },
   "devDependencies": {
     "browserify": "~6.3.2"
