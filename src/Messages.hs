@@ -34,16 +34,16 @@ data Message
   = IncFst Int
   | IncSnd Int
   | IncBoth Int Int
-  | FetchAjax
-  | AjaxPending
-  | AjaxResponse (Maybe User)
+  | FetchGithubUser String
+  | GithubUserPending
+  | GithubUserResponse (Maybe User)
 
 process :: Message -> World -> World
 process (IncFst n) (a,b,c) = (a + n,b,c)
 process (IncSnd n) (a,b,c) = (a,b + n,c)
-process AjaxPending (a,b,_) = (a,b,Loading)
-process (AjaxResponse (Just u)) (a,b,_) = (a,b, Loaded u)
-process (AjaxResponse Nothing) (a,b,_) = (a,b, NotFound)
+process GithubUserPending (a,b,_) = (a,b,Loading)
+process (GithubUserResponse (Just u)) (a,b,_) = (a,b, Loaded u)
+process (GithubUserResponse Nothing) (a,b,_) = (a,b, NotFound)
 process _ w = w
 
 jsonToUser :: Maybe String -> Maybe User
@@ -58,14 +58,17 @@ queue (IncBoth x y) output =
   send output (IncFst x) >>
   send output (IncSnd y)
 
-queue FetchAjax output =
-  do _ <- atomically (send output AjaxPending)
+-- This is more interesting, and show that we can display a loading
+-- message while we wait for the data to return.
+queue (FetchGithubUser username) output =
+  do _ <- atomically (send output GithubUserPending)
      (output2,input2) <- spawn Single
-     _ <- get "https://api.github.com/users/boothead" output2
+     _ <- request output2
      _ <- forkIO $
           void $
           atomically $
           do response <- recv input2
-             send output (AjaxResponse (jsonToUser response))
+             send output ((GithubUserResponse . jsonToUser) response)
      return True
+  where request = get ("https://api.github.com/users/" ++ username)
 queue _ _ = return True

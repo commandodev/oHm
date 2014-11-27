@@ -27,7 +27,7 @@ controls send =
         [msgButton (IncFst 5) "+(5, 0)"
         ,msgButton (IncSnd 3) "+(0, 3)"
         ,msgButton (IncBoth 1 2) "+(1, 2)"
-        ,msgButton FetchAjax "AJAX"]
+        ,msgButton (FetchGithubUser "boothead") "AJAX"]
   where msgButton msg =
           vbutton "button.btn.btn-primary" (\_ -> send msg)
 
