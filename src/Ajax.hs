@@ -27,17 +27,13 @@ foreign import javascript unsafe
    };\
    $1.open('GET', $2, true);\
    $1.setRequestHeader('X-Requested-With', 'XMLHttpRequest');\
-   $1.send()" get_ :: JSRef XHR -> JSString -> (JSFun (JSRef a -> IO ())) -> IO ()
-
-foreign import javascript unsafe
-  "function (response) { $r = response.responseText; }" get_handler_ :: IO (JSFun (JSRef a -> IO JSString))
+   $1.send()" get_ :: JSRef XHR -> JSString -> (JSFun (JSString -> IO ())) -> IO ()
 
 #endif
 
 get :: URL -> Output String -> IO ()
-get url output = do
-                 xhr <- xhr_
-                 let action :: JSString -> IO ()
-                     action response = atomically $ void $ send output (fromJSString response)
-                 js_callback <- syncCallback1 AlwaysRetain False action
-                 get_ xhr (toJSString url) js_callback
+get url output =
+  do xhr <- xhr_
+     let action response = void $ atomically $ send output (fromJSString response)
+     js_callback <- syncCallback1 AlwaysRetain False action
+     get_ xhr (toJSString url) js_callback
