@@ -27,6 +27,7 @@ $(VENDOR): $(JS_DEPS)
 $(ALL_JS): $(VENDOR) .cabal-deps $(GHCJS_SOURCE_FILES)
 	ghcjs -Wall \
 	  -O3 \
+	  -DGHCJS_BROWSER \
 	  -o Main \
       $(VENDOR) \
       $(GHCJS_SOURCE_FILES)
