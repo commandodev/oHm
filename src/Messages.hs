@@ -21,11 +21,15 @@ type World = (Int,Int,Pending User)
 
 data User =
   User {login :: String
-       ,id :: Integer} deriving (Eq, Show)
+       ,name :: String
+       ,email :: String
+       ,id :: Integer}
+  deriving (Eq,Show)
 
 instance FromJSON User where
-  parseJSON (Object v) = User <$> v .: "login" <*> v .: "id"
-  parseJSON _          = mzero
+  parseJSON (Object v) = User <$> v .: "login" <*> v .: "name" <*> v .: "email" <*>
+                         v .: "id"
+  parseJSON _ = mzero
 
 data Message
   = IncFst Int
