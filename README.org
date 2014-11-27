@@ -39,8 +39,8 @@ be extracted into their own library.
 
 ** Work To Do
 
+- [X] Demonstrate Networking
 - [ ] Demonstrate Forms
-- [ ] Demonstrate Networking
 - [ ] Use Lucid for DOM-generation.
 
 ** License
