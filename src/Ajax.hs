@@ -3,8 +3,10 @@
 
 module Ajax where
 
+import Control.Monad
 import GHCJS.Foreign
 import GHCJS.Types
+import Pipes.Concurrent
 
 data XHR
 data XHResponse
@@ -17,19 +19,25 @@ foreign import javascript unsafe
 " xhr_ :: IO (JSRef XHR)
 
 -- TODO There's a retain issue here.  $1 can have been cleaned up by the time $c is called.
-foreign import javascript interruptible
+foreign import javascript unsafe
   "$1.onreadystatechange = function () {\
      if ($1.readyState === 4) {\
-       $c($1.responseText);\
+       $3($1.responseText);\
      }\
    };\
    $1.open('GET', $2, true);\
    $1.setRequestHeader('X-Requested-With', 'XMLHttpRequest');\
-   $1.send()" get_ :: JSRef XHR -> JSString -> IO (JSString)
+   $1.send()" get_ :: JSRef XHR -> JSString -> (JSFun (JSRef a -> IO ())) -> IO ()
+
+foreign import javascript unsafe
+  "function (response) { $r = response.responseText; }" get_handler_ :: IO (JSFun (JSRef a -> IO JSString))
+
 #endif
 
-get :: URL -> IO (String)
-get url =
-  do xhr <- xhr_
-     response <- get_ xhr (toJSString url)
-     return (fromJSString response)
+get :: URL -> Output String -> IO ()
+get url output = do
+                 xhr <- xhr_
+                 let action :: JSString -> IO ()
+                     action response = atomically $ void $ send output (fromJSString response)
+                 js_callback <- syncCallback1 AlwaysRetain False action
+                 get_ xhr (toJSString url) js_callback

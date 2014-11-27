@@ -5,6 +5,7 @@
 module Messages where
 
 import Ajax
+import Control.Monad
 import Pipes.Concurrent
 
 data Pending a
@@ -32,6 +33,12 @@ queue :: Message -> Output Message -> IO Bool
 queue (IncBoth x y) output = atomically $ send output (IncFst x) >> send output (IncSnd y)
 queue FetchAjax output =
   do _ <- atomically (send output AjaxPending)
-     response <- get "https://api.github.com/users/boothead"
-     atomically (send output (AjaxResponse response))
+     (output2,input2) <- spawn Single
+     _ <- get "https://api.github.com/users/boothead" output2
+     _ <- forkIO $
+          void $
+          atomically $
+          do Just response <- recv input2
+             send output (AjaxResponse response)
+     return True
 queue _ _ = return True
