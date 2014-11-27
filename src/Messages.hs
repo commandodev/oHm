@@ -4,18 +4,13 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module Messages where
+
 import Ajax
 import Control.Monad
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Pipes.Concurrent
 import GHC.Generics (Generic)
-
-data Pending a
-  = NotRequested
-  | NotFound
-  | Loading
-  | Loaded a deriving (Show)
 
 type World = (Int,Int,Pending User)
 
@@ -28,6 +23,12 @@ data User =
 
 instance FromJSON User
 instance ToJSON User
+
+data Pending a
+  = NotRequested
+  | NotFound
+  | Loading
+  | Loaded a deriving (Eq,Show)
 
 data Message
   = IncFst Int
@@ -52,7 +53,10 @@ jsonToUser Nothing = Nothing
 queue :: Message -> Output Message -> IO Bool
 
 -- We could process IncBoth directly easily enough. Instead, here's how to process it by applying two submessages.
-queue (IncBoth x y) output = atomically $ send output (IncFst x) >> send output (IncSnd y)
+queue (IncBoth x y) output =
+  atomically $
+  send output (IncFst x) >>
+  send output (IncSnd y)
 
 queue FetchAjax output =
   do _ <- atomically (send output AjaxPending)
