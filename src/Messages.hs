@@ -1,54 +1,54 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE DeriveGeneric #-}
 
 module Messages where
 
 import Ajax
 import Control.Monad
 import Data.Aeson
+import MarketData
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Pipes.Concurrent
-import GHC.Generics (Generic)
 
-type World = (Int,Int,Pending User)
-
-data User =
-  User {login :: !String
-       ,name :: !String
-       ,email :: String
-       ,id :: Integer}
-  deriving (Show,Generic)
-
-instance FromJSON User
-instance ToJSON User
+type World = (Int,Int,Market -> Bool,Pending [Market])
 
 data Pending a
   = NotRequested
   | NotFound
   | Loading
-  | Loaded a deriving (Eq,Show)
+  | Loaded a
+  | LoadFailed String
+  deriving (Eq,Show)
 
 data Message
   = IncFst Int
   | IncSnd Int
-  | IncBoth Int Int
-  | FetchGithubUser String
-  | GithubUserPending
-  | GithubUserResponse (Maybe User)
+  | IncBoth Int
+            Int
+  | FilterCurrency (Maybe String)
+  | FetchMarket
+  | MarketPending
+  | MarketResponse (Either String [Market])
 
 process :: Message -> World -> World
-process (IncFst n) (a,b,c) = (a + n,b,c)
-process (IncSnd n) (a,b,c) = (a,b + n,c)
-process GithubUserPending (a,b,_) = (a,b,Loading)
-process (GithubUserResponse (Just u)) (a,b,_) = (a,b, Loaded u)
-process (GithubUserResponse Nothing) (a,b,_) = (a,b, NotFound)
+process (IncFst n) (a,b,c,d) = (a + n,b,c,d)
+process (IncSnd n) (a,b,c,d) = (a,b + n,c,d)
+process MarketPending (a,b,c,_) = (a,b,c,Loading)
+process (FilterCurrency Nothing) (a,b,_,d) = (a,b,const True,d)
+process (FilterCurrency (Just x)) (a,b,_,d) =
+  (a
+  ,b
+  ,\market ->
+     x ==
+      currency market
+  ,d)
+process (MarketResponse (Left e)) (a,b,c,_) = (a,b,c,LoadFailed e)
+process (MarketResponse (Right u)) (a,b,c,_) = (a,b,c,Loaded u)
 process _ w = w
 
-jsonToUser :: Maybe String -> Maybe User
-jsonToUser (Just x) = decode (BSL.pack x)
-jsonToUser Nothing = Nothing
+jsonToMarket :: Maybe String -> Either String [Market]
+jsonToMarket (Just x) = eitherDecode (BSL.pack x)
+jsonToMarket Nothing = Left "Nothing supplied."
 
 queue :: Message -> Output Message -> IO Bool
 
@@ -60,15 +60,15 @@ queue (IncBoth x y) output =
 
 -- This is more interesting, and show that we can display a loading
 -- message while we wait for the data to return.
-queue (FetchGithubUser username) output =
-  do _ <- atomically (send output GithubUserPending)
+queue FetchMarket output =
+  do _ <- atomically (send output MarketPending)
      (output2,input2) <- spawn Single
      _ <- request output2
      _ <- forkIO $
           void $
           atomically $
           do response <- recv input2
-             send output ((GithubUserResponse . jsonToUser) response)
+             send output ((MarketResponse . jsonToMarket) response)
      return True
-  where request = get ("https://api.github.com/users/" ++ username)
+  where request = get "/markets.json"
 queue _ _ = return True

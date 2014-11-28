@@ -1,8 +1,9 @@
 ALL_JS=Main.jsexe/all.js
 JS_DEPS=src/deps.js
-GHCJS_SOURCE_FILES=src/Virtual.hs src/Render.hs src/Main.hs src/Messages.hs src/Ajax.hs src/HTML.hs
+GHCJS_SOURCE_FILES=src/*.hs
 VENDOR=build/vendor.js
 BOOTSTRAP=node_modules/twitter-bootstrap-3.0.0/dist/css/bootstrap.min.css
+DIST=dist
 
 all: site
 
@@ -10,14 +11,15 @@ hlint:
 	hlint --cpp-define=HLINT=true $(GHCJS_SOURCE_FILES)
 
 minified: $(ALL_JS)
-	node_modules/closurecompiler/bin/ccjs  $(ALL_JS) --compilation_level=ADVANCED_OPTIMIZATIONS > dist/all.min.js
-	gzip --best -k dist/all.min.js
+	node_modules/closurecompiler/bin/ccjs  $(ALL_JS) --compilation_level=ADVANCED_OPTIMIZATIONS > $(DIST)/all.min.js
+	gzip --best -k $(DIST)/all.min.js
 
 site: $(ALL_JS) $(BOOTSTRAP)
-	mkdir -p dist
-	cp $(BOOTSTRAP) dist/
-	cp src/index.html dist/
-	cp $(ALL_JS) dist/
+	mkdir -p $(DIST)
+	cp $(BOOTSTRAP) $(DIST)/
+	cp src/index.html $(DIST)/
+	cp data/markets.json $(DIST)/
+	cp $(ALL_JS) $(DIST)/
 
 .cabal-deps: bellringer.cabal
 	cabal install --only-dependencies --ghcjs
@@ -33,8 +35,8 @@ $(VENDOR): $(JS_DEPS)
 
 $(ALL_JS): $(VENDOR) .cabal-deps $(GHCJS_SOURCE_FILES)
 	ghcjs -Wall \
-	  -O3 \
 	  -DGHCJS_BROWSER \
+	  -H16m \
 	  -o Main \
       $(VENDOR) \
       $(GHCJS_SOURCE_FILES)

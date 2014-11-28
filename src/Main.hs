@@ -31,7 +31,8 @@ main :: IO ()
 main =
   do (worldState,val) <- atomically $
                          do let val :: World
-                                val = (0,0,NotRequested)
+                                val =
+                                  (0,0,const True,NotRequested)
                             worldState <- newTVar val
                             return (worldState,val)
      (output,input) <- spawn (Bounded 10)

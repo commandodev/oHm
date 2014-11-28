@@ -1,7 +1,11 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE RankNTypes #-}
 
 module Virtual (
   vnode,
+  vnodeFull,
+  svgProp,
+  rect,
   vtext,
   vbutton,
   renderSetup,
@@ -11,16 +15,20 @@ module Virtual (
   HTML()
   ) where
 
-import GHCJS.Foreign
-import GHCJS.Types
-import System.IO.Unsafe -- TODO This is, of course, bad.
+import           GHCJS.Foreign
+import           GHCJS.Types
+import           GHCJS.Marshal
+import           System.IO.Unsafe -- TODO This is, of course, bad.
 
 data VNode
 data DOMNode
 data Patch
+data JSProperties
 data TreeState = TreeState {_node :: JSRef DOMNode, _tree :: HTML}
 newtype HTML = HTML (JSRef VNode)
 newtype HTMLPatch = HTMLPatch (JSRef Patch)
+newtype Properties =
+  Properties {props :: JSRef JSProperties}
 
 makeTreeState :: JSRef DOMNode -> HTML -> TreeState
 makeTreeState n t= TreeState { _node = n, _tree = t}
@@ -33,7 +41,7 @@ foreign import javascript unsafe
   "$1.appendChild($2)" appendChild :: JSRef DOMNode -> JSRef DOMNode -> IO ()
 
 foreign import javascript unsafe
-  "h($1, {}, $2)" vnode_ :: JSString -> JSArray VNode -> JSRef VNode
+  "h($1, $2, $3)" vnode_ :: JSString -> JSRef JSProperties -> JSArray VNode -> JSRef VNode
 
 foreign import javascript unsafe
   "h($1, {'ev-click': $2}, $3)" vbutton_ :: JSString -> JSFun (JSRef a -> IO ()) -> JSString -> JSRef VNode
@@ -49,10 +57,51 @@ foreign import javascript safe
 
 foreign import javascript safe
   "patch($1, $2)" patch_ :: JSRef DOMNode -> JSRef Patch -> IO (JSRef DOMNode)
+
+foreign import javascript unsafe
+  "$r = {};" noproperty_ :: JSRef JSProperties
+
+foreign import javascript unsafe
+  "$r = {namespace: 'http://www.w3.org/2000/svg',width: '800px', height: '500px'};" svgProp_ :: JSRef JSProperties
+
+foreign import javascript unsafe
+  "$r = svg('rect', { width: $1, height: $2, x: $3, y: $4 });" rect_ :: JSString -> JSString -> JSString -> JSString -> JSRef VNode
 #endif
 
+-- property :: String -> String -> Properties
+-- property k v =
+--   Properties $
+--   property_ (toJSString k)
+--             (toJSString v)
+
+noProperty :: Properties
+noProperty = Properties noproperty_
+
+svgProp :: Properties
+svgProp = Properties svgProp_
+
+rect :: String -> String -> String -> String -> HTML
+rect w h x y =
+  HTML $
+  rect_ (toJSString w)
+        (toJSString h)
+        (toJSString x)
+        (toJSString y)
+
+vnodeFull :: String -> Properties -> [HTML] -> HTML
+vnodeFull tag properties children =
+  HTML $
+  vnode_ (toJSString tag)
+         (props properties)
+         (unsafePerformIO (toArray (fmap f children)))
+  where f (HTML a) = a
+
 vnode :: String -> [HTML] -> HTML
-vnode tag children = HTML $ vnode_ (toJSString tag) (unsafePerformIO (toArray (map f children)))
+vnode tag children =
+  HTML $
+  vnode_ (toJSString tag)
+         noproperty_
+         (unsafePerformIO (toArray (map f children)))
   where f (HTML a) = a
 
 vbutton :: String -> (JSRef a -> IO ()) -> String -> HTML

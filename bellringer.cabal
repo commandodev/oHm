@@ -22,7 +22,8 @@ executable bellringer
                        pipes >= 4.0,
                        pipes-concurrency >= 2.0,
                        aeson > 0.8,
-                       mvc >= 1.0.2,
+                       time > 1.4,
+                       mvc >= 1.0.1,
                        mvc-updates >= 1.2.0,
                        ghcjs-base >= 0.1
   hs-source-dirs:      src
