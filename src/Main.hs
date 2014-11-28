@@ -16,11 +16,13 @@ import Render
 input :: Input Message -> Controller Message
 input clicks = asInput clicks
 
-model :: Model World Message HTML
-model = asPipe $ forever $ do
+model :: (Message -> IO ()) -> Model World Message HTML
+model sendCB = asPipe $ forever $ do
   m <- await
-  lift $ modify $ process m
-  yield _
+  w <- lift $ get 
+  let w' = process m w
+  lift $ put w'
+  yield $ rootView sendCB w'
   
 
 vdomView :: View HTML
@@ -32,18 +34,20 @@ sendMessage :: Output Message -> Message -> IO ()
 sendMessage output msg = do
   print msg
   atomically $ void $ send output msg
+  
 
-main = runMVC initialWorld model $ managed $ \k -> do
 
-
+main = do
   (clicksOut, clicksIn) <- spawn (Bounded 10)
-  treeState <- newMVar =<< renderSetup (rootView (sendMessage clicksOut)) initialWorld
-  body <- documentBody
-  k (asSink (reRenderDiff treeState), input clicksIn)
-  where
-    reRenderDiff treeStateVar newTree = do
-      modifyMVar treeStateVar $ \(TreeState {_node = oldNode, _tree = oldTree}) -> do
-        let patches = diff oldTree newTree
-        newNode <- patch oldNode patches
-        return $ (makeTreeState newNode newTree, ())
+  let sendCB = sendMessage clicksOut
+  runMVC initialWorld (model sendCB) $ managed $ \k -> do
+    treeState <- newMVar =<< renderSetup (rootView sendCB) initialWorld
+    body <- documentBody
+    k (asSink (reRenderDiff treeState), input clicksIn)
+    where
+      reRenderDiff treeStateVar newTree = do
+        modifyMVar treeStateVar $ \(TreeState {_node = oldNode, _tree = oldTree}) -> do
+          let patches = diff oldTree newTree
+          newNode <- patch oldNode patches
+          return $ (makeTreeState newNode newTree, ())
   
