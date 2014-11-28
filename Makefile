@@ -6,6 +6,9 @@ BOOTSTRAP=node_modules/twitter-bootstrap-3.0.0/dist/css/bootstrap.min.css
 
 all: site
 
+hlint:
+	hlint --cpp-define=HLINT=true $(GHCJS_SOURCE_FILES)
+
 minified: $(ALL_JS)
 	node_modules/closurecompiler/bin/ccjs  $(ALL_JS) --compilation_level=ADVANCED_OPTIMIZATIONS > dist/all.min.js
 	gzip --best -k dist/all.min.js
