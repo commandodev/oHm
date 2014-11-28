@@ -2,7 +2,7 @@ module Main where
 
 import Control.Concurrent.MVar
 import Control.Concurrent.STM
-import Control.Monad (void)
+import Control.Monad (void, forever)
 import Control.Monad.Trans.State.Strict
 import Pipes
 import Pipes.Concurrent
@@ -17,9 +17,10 @@ input :: Input Message -> Controller Message
 input clicks = asInput clicks
 
 model :: Model World Message HTML
-model = asPipe $ do
+model = asPipe $ forever $ do
   m <- await
   lift $ modify $ process m
+  yield _
   
 
 vdomView :: View HTML
