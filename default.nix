@@ -1,10 +1,10 @@
-{ stdenv, ghc, pipes, pipesConcurrency, ghcjsDom, npm, browserify
+{ stdenv, ghc, pipes, pipesConcurrency, ghcjsDom, mvc, mvcUpdates, npm, browserify
 }:
 stdenv.mkDerivation {
   name = "bell-ringer";
   version = "1.0";
   src = ./.;
-  buildInputs = [ ghc ghcjsDom pipes pipesConcurrency npm browserify];
+  buildInputs = [ ghc ghcjsDom pipes pipesConcurrency mvc mvcUpdates npm browserify];
   buildPhase = ''
     mkdir -p node_modules
     npm install
