@@ -9,6 +9,9 @@ import Ajax
 import Control.Monad
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BSL
+import Control.Monad.IO.Class
+import Control.Monad (void)
+import Pipes
 import Pipes.Concurrent
 import GHC.Generics (Generic)
 
@@ -51,22 +54,23 @@ jsonToUser :: Maybe String -> Maybe User
 jsonToUser (Just x) = decode (BSL.pack x)
 jsonToUser Nothing = Nothing
 
-queue :: Message -> Output Message -> IO Bool
+queue :: (MonadIO m) => Message -> Output Message -> Effect m ()
+queue (IncBoth x y) output = liftIO $ do
+  print "Both"
+  void $ atomically $ do
+    send output (IncFst x)
+    send output (IncSnd y)
 
--- We could process IncBoth directly easily enough. Instead, here's how to process it by applying two submessages.
-queue (IncBoth x y) output =
-  atomically $
-  send output (IncFst x) >>
-  send output (IncSnd y)
-
-queue FetchAjax output =
-  do _ <- atomically (send output AjaxPending)
-     (output2,input2) <- spawn Single
-     _ <- get "https://api.github.com/users/boothead" output2
-     _ <- forkIO $
-          void $
-          atomically $
-          do response <- recv input2
-             send output (AjaxResponse (jsonToUser response))
-     return True
-queue _ _ = return True
+queue FetchAjax output = liftIO $ do
+  print "Fetch"
+  _ <- atomically (send output AjaxPending)
+  (output2,input2) <- spawn Single
+  _ <- get "https://api.github.com/users/boothead" output2
+  void $ forkIO $
+     void $
+     atomically $
+     do response <- recv input2
+        send output (AjaxResponse (jsonToUser response))
+queue m o = liftIO $ do
+  print m
+  void $ atomically $ send o m
