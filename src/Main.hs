@@ -5,18 +5,18 @@ import Control.Concurrent.STM
 import Control.Monad (void, forever)
 import Control.Monad.Trans.State.Strict
 import Pipes
-import qualified Pipes.Prelude as P
 import Pipes.Concurrent
 import MVC
-import MVC.Prelude
 
 import Virtual
 import Messages
 import Render
 
+-- | Source of events from the UI
 input :: Input Message -> Controller Message
 input clicks = asInput clicks
 
+-- | Construct a @HTML@ tree from the world with a callback for clicks
 model :: (Message -> IO ()) -> Model World Message HTML
 model sendCB = asPipe $ forever $ do
   m <- await
@@ -25,39 +25,29 @@ model sendCB = asPipe $ forever $ do
   lift $ put w'
   yield $ rootView sendCB w'
   
-
-vdomView :: View HTML
-vdomView = undefined
-
+-- | Initial State
+initialWorld :: World
 initialWorld = (0, 0, NotRequested)
 
+-- | A callback the sends @Message@s to an @Output@
 sendMessage :: Output Message -> Message -> IO ()
 sendMessage output msg = do
-  print msg
   atomically $ void $ send output msg
   
-handler :: Output Message -> Input Message -> IO (Input Message)
-handler output input = do
-  (out, inner) <- spawn Single
-  forkIO $ runEffect $ for (fromInput input) $ \msg -> do
-    queue msg out
+-- | Processes click events, possible dispatching to second order producers
+clickProcessor :: Input Message -> IO (Input Message)
+clickProcessor uiClicks = do
+  (out, inner) <- spawn Unbounded
+  void $ forkIO $ runEffect $ for (fromInput uiClicks) $ flip queue out
   return inner
   
-  -- do msg <- await
-  --    _ <- lift $ queue msg output
-  --    newVal <- lift $
-  --              atomically $
-  --              swap worldState (process msg)
-  --    lift $
-  --      rerender view newVal tree
-
+main :: IO ()
 main = do
   (clicksOut, clicksIn) <- spawn (Bounded 10)
-  processedClicks <- handler clicksOut clicksIn
+  processedClicks <- clickProcessor clicksIn
   let sendCB = sendMessage clicksOut
-  runMVC initialWorld (model sendCB) $ managed $ \k -> do
+  void $ runMVC initialWorld (model sendCB) $ managed $ \k -> do
     treeState <- newMVar =<< renderSetup (rootView sendCB) initialWorld
-    body <- documentBody
     k (asSink (reRenderDiff treeState), input processedClicks)
     where
       reRenderDiff treeStateVar newTree = do

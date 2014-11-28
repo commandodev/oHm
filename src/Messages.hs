@@ -10,7 +10,6 @@ import Control.Monad
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Control.Monad.IO.Class
-import Control.Monad (void)
 import Pipes
 import Pipes.Concurrent
 import GHC.Generics (Generic)
@@ -56,21 +55,15 @@ jsonToUser Nothing = Nothing
 
 queue :: (MonadIO m) => Message -> Output Message -> Effect m ()
 queue (IncBoth x y) output = liftIO $ do
-  print "Both"
-  void $ atomically $ do
-    send output (IncFst x)
-    send output (IncSnd y)
+  void $ atomically $ send output (IncFst x) >> send output (IncSnd y)
 
 queue FetchAjax output = liftIO $ do
-  print "Fetch"
   _ <- atomically (send output AjaxPending)
-  (output2,input2) <- spawn Single
+  (output2, input2) <- spawn Single
   _ <- get "https://api.github.com/users/boothead" output2
   void $ forkIO $
      void $
      atomically $
      do response <- recv input2
         send output (AjaxResponse (jsonToUser response))
-queue m o = liftIO $ do
-  print m
-  void $ atomically $ send o m
+queue m o = liftIO . void . atomically $ send o m
