@@ -7,7 +7,7 @@ stdenv.mkDerivation {
   buildInputs = [ ghc ghcjsDom pipes pipesConcurrency mvc mvcUpdates npm browserify];
   buildPhase = ''
     mkdir -p node_modules
-    npm install
+    HOME=$(pwd) npm install
     mkdir -p build
     browserify src/deps.js -o build/vendor.js
     ghcjs -O3 -Wall       \
