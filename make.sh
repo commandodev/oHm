@@ -4,5 +4,5 @@
 nix-shell -I . \
   --command 'ghcjs -O3 -Wall\
                    -o Main\
-                   src/Virtual.hs src/Render.hs src/Main.hs src/Messages.hs src/Ajax.hs\
+                   src/*.hs\
                    build/vendor.js'
