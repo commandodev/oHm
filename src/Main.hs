@@ -1,42 +1,48 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Main where
 
+import Control.Concurrent.MVar
 import Control.Concurrent.STM
-import Control.Monad
-import Messages
+import Control.Monad (void)
+import Control.Monad.Trans.State.Strict
 import Pipes
 import Pipes.Concurrent
-import Render
+import MVC
+import MVC.Prelude
+
 import Virtual
+import Messages
+import Render
 
-swap :: TVar a -> (a -> a) -> STM a
-swap a f = modifyTVar a f >> readTVar a
+input :: Input Message -> Controller Message
+input clicks = asInput clicks
 
-handler :: (World -> HTML) -> Output Message -> TVar World -> TreeState -> Consumer Message IO ()
-handler view output worldState tree =
-  forever $
-  do msg <- await
-     _ <- lift $ queue msg output
-     newVal <- lift $
-               atomically $
-               swap worldState (process msg)
-     lift $
-       rerender view newVal tree
+model :: Model World Message HTML
+model = asPipe $ do
+  m <- await
+  lift $ modify $ process m
+  
+
+vdomView :: View HTML
+vdomView = undefined
+
+initialWorld = (0, 0, NotRequested)
 
 sendMessage :: Output Message -> Message -> IO ()
-sendMessage output msg = atomically $ void $ send output msg
+sendMessage output msg = do
+  print msg
+  atomically $ void $ send output msg
 
-main :: IO ()
-main =
-  do (worldState,val) <- atomically $
-                         do let val :: World
-                                val = (0,0,NotRequested)
-                            worldState <- newTVar val
-                            return (worldState,val)
-     (output,input) <- spawn (Bounded 10)
-     let renderer = rootView (sendMessage output)
-     initialTree <- renderSetup renderer val
-     runEffect $
-       fromInput input >->
-       handler renderer output worldState initialTree
+main = runMVC initialWorld model $ managed $ \k -> do
+
+
+  (clicksOut, clicksIn) <- spawn (Bounded 10)
+  treeState <- newMVar =<< renderSetup (rootView (sendMessage clicksOut)) initialWorld
+  body <- documentBody
+  k (asSink (reRenderDiff treeState), input clicksIn)
+  where
+    reRenderDiff treeStateVar newTree = do
+      modifyMVar treeStateVar $ \(TreeState {_node = oldNode, _tree = oldTree}) -> do
+        let patches = diff oldTree newTree
+        newNode <- patch oldNode patches
+        return $ (makeTreeState newNode newTree, ())
+  

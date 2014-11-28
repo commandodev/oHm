@@ -37,6 +37,7 @@ data Message
   | FetchAjax
   | AjaxPending
   | AjaxResponse (Maybe User)
+  deriving (Show)
 
 process :: Message -> World -> World
 process (IncFst n) (a,b,c) = (a + n,b,c)
