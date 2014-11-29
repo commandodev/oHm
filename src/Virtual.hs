@@ -10,7 +10,10 @@ module Virtual (
   vbutton,
   renderSetup,
   rerender,
-  TreeState(),
+  documentBody,
+  diff,
+  patch,
+  TreeState(..),
   makeTreeState,
   HTML()
   ) where

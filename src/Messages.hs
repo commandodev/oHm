@@ -8,6 +8,8 @@ import Control.Monad
 import Data.Aeson
 import MarketData
 import qualified Data.ByteString.Lazy.Char8 as BSL
+import Control.Monad.IO.Class
+import Pipes
 import Pipes.Concurrent
 
 type World = (Int,Int,Market -> Bool,Pending [Market])
@@ -29,6 +31,7 @@ data Message
   | FetchMarket
   | MarketPending
   | MarketResponse (Either String [Market])
+  deriving (Show)
 
 process :: Message -> World -> World
 process (IncFst n) (a,b,c,d) = (a + n,b,c,d)
@@ -50,25 +53,19 @@ jsonToMarket :: Maybe String -> Either String [Market]
 jsonToMarket (Just x) = eitherDecode (BSL.pack x)
 jsonToMarket Nothing = Left "Nothing supplied."
 
-queue :: Message -> Output Message -> IO Bool
+queue :: (MonadIO m) => Message -> Output Message -> Effect m ()
 
 -- We could process IncBoth directly easily enough. Instead, here's how to process it by applying two submessages.
-queue (IncBoth x y) output =
-  atomically $
-  send output (IncFst x) >>
-  send output (IncSnd y)
+queue (IncBoth x y) output = liftIO $ do
+  void $ atomically $ send output (IncFst x) >> send output (IncSnd y)
 
--- This is more interesting, and show that we can display a loading
--- message while we wait for the data to return.
-queue FetchMarket output =
-  do _ <- atomically (send output MarketPending)
-     (output2,input2) <- spawn Single
-     _ <- request output2
-     _ <- forkIO $
-          void $
-          atomically $
-          do response <- recv input2
-             send output ((MarketResponse . jsonToMarket) response)
-     return True
-  where request = get "/markets.json"
-queue _ _ = return True
+queue FetchMarket output = liftIO $ do
+  _ <- atomically (send output MarketPending)
+  (output2, input2) <- spawn Single
+  _ <- get "/markets.json" output2
+  void $ forkIO $
+     void $
+     atomically $
+     do response <- recv input2
+        send output (MarketResponse (jsonToMarket response))
+queue m o = liftIO . void . atomically $ send o m
