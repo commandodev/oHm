@@ -2,10 +2,6 @@
 /node_modules/
 /Main.jsexe/
 .tern-port
-*.o
-*.hi
-*.js_o
-*.js_hi
 /build/
 /.cabal-deps
 result

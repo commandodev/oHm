@@ -45,6 +45,7 @@ $(VENDOR): .node-deps $(JS_DEPS)
 
 $(ALL_JS): $(VENDOR) .cabal-deps .node-deps $(GHCJS_SOURCE_FILES)
 	ghcjs -Wall \
+	  -outputdir build \
 	  -DGHCJS_BROWSER \
 	  -H16m \
 	  -o Main \
