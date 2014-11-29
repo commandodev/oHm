@@ -13,3 +13,4 @@ nixpkgs
 \#*
 \.\#*
 deps
+/.node-deps
