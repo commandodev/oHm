@@ -15,6 +15,8 @@ module Virtual (
   patch,
   TreeState(..),
   makeTreeState,
+  Size(..),
+  Position(..),
   HTML()
   ) where
 
@@ -83,8 +85,11 @@ noProperty = Properties noproperty_
 svgProp :: Properties
 svgProp = Properties svgProp_
 
-rect :: String -> String -> String -> String -> HTML
-rect w h x y =
+data Size = Size String String deriving (Show,Eq)
+data Position = Position String String deriving (Show,Eq)
+
+rect :: Size -> Position -> HTML
+rect (Size w h) (Position x y) =
   HTML $
   rect_ (toJSString w)
         (toJSString h)

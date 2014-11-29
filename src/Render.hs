@@ -19,10 +19,10 @@ marketDataGraph rows =
         closes = mapMaybe close rows
         highest = maximum closes
         f (n,r) =
-          rect (show w ++ "%")
-               (show h ++ "%")
-               (show x ++ "%")
-               (show y ++ "%")
+          rect (Size (show w ++ "%")
+                     (show h ++ "%"))
+               (Position (show x ++ "%")
+                         (show y ++ "%"))
           where w, h, x, y :: Double
                 x = 100.0 * fromIntegral n / fromIntegral count
                 y = 100 - h
