@@ -2,7 +2,7 @@ module Main where
 
 import Control.Concurrent.MVar
 import Control.Concurrent.STM
-import Control.Monad (forever)
+import Control.Monad (forever, void)
 import Control.Monad.Trans.State.Strict
 import Pipes
 import Pipes.Concurrent
