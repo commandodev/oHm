@@ -23,15 +23,3 @@ import Francium.HTML (HTML, newTopLevelContainer, renderTo)
 import Francium.DOMEvent
 import Control.Applicative
 import Control.Monad.IO.Class
-import GHCJS.Types
-
---------------------------------------------------------------------------------
-data DOMDelegator
-
-#ifndef HLINT
-
-foreign import javascript unsafe
-  "console.log('Initializing dom-delegator'); $r = DOMDelegator();"
-  initDomDelegator :: IO (JSRef DOMDelegator)
-
-#endif

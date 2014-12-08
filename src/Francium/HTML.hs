@@ -24,7 +24,6 @@ import Control.Applicative
 import Control.Lens hiding (aside, children, coerce, pre)
 import Control.Monad
 import Control.Monad.State
-import Control.Concurrent.STM
 import Data.Coerce (coerce)
 import Data.IORef
 import Data.Maybe
@@ -37,7 +36,6 @@ import GHCJS.DOM.Node
 import GHCJS.Foreign
 import GHCJS.Types
 import Immutable
-import Pipes.Concurrent (send)
 import Prelude hiding (div, head, map, mapM, sequence, span)
 import System.IO.Unsafe
 

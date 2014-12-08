@@ -1,18 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Render (
     rootView
-  , countRender
-  , CountMessage(..)
-  , ChatModel(..)
   ) where
 
-import Data.Functor.Contravariant ((>$), contramap)
 import Control.Lens hiding (children)
 import Francium.HTML
 import Messages
 import Prelude hiding (div,id,span,map)
 import qualified Prelude as P
-import Francium.HTML ()
 import Francium.DOMEvent
 
 bootstrapEl :: String -> [HTML] -> HTML
@@ -74,7 +69,7 @@ textBoxRender name currentMsg saidEvent@(DOMEvent chan) =
         sendMessage = const $ chan (addName currentMsg)
         
 rootView :: DOMEvent Message -> AppModel -> HTML
-rootView chan mdl@(AppModel chatModel count) =
+rootView chan (AppModel chatModel count) =
   container
     [ with nav (classes .= ["nav", "navbar", "navbar-default"])
         [with div (classes .= ["navbar-brand"])

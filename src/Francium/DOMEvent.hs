@@ -1,4 +1,8 @@
-module Francium.DOMEvent where
+module Francium.DOMEvent (
+    DOMEvent(..)
+  , domChannel
+  , clickChannel
+  ) where
 
 import Control.Concurrent.STM
 import Control.Monad (void)
