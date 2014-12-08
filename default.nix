@@ -1,10 +1,10 @@
-{ stdenv, ghc, pipes, pipesConcurrency, ghcjsDom, mvc, mvcUpdates, npm, browserify, closurecompiler
+{ stdenv, ghc, lens, pipes, pipesConcurrency, ghcjsDom, mvc, profunctors, npm, browserify, closurecompiler
 }:
 stdenv.mkDerivation {
   name = "bell-ringer";
   version = "1.0";
   src = ./.;
-  buildInputs = [ ghc ghcjsDom pipes pipesConcurrency mvc mvcUpdates npm browserify closurecompiler];
+  buildInputs = [ ghc ghcjsDom lens pipes pipesConcurrency mvc profunctors npm browserify closurecompiler];
   buildPhase = ''
     mkdir -p node_modules
     HOME=$(pwd) npm install
@@ -15,7 +15,9 @@ stdenv.mkDerivation {
           -DGHCJS_BROWSER \
           -o Main         \
           build/vendor.js \
-          src/*.hs
+          vendor/*.js \
+          src/*.hs \
+          src/Francium/*.hs
   '';
   installPhase = ''
     mkdir -p $out
@@ -23,7 +25,8 @@ stdenv.mkDerivation {
     cp src/index.html $out
     cp data/markets.json $out
     cp -R Main.jsexe/*.js $out/
-    closure-compiler $out/all.js --compilation_level=ADVANCED_OPTIMIZATIONS > $out/all.min.js
-    gzip --best -k $out/all.min.js
+    cp -R vendor/*.js $out/
+    # closure-compiler $out/all.js --compilation_level=ADVANCED_OPTIMIZATIONS > $out/all.min.js
+    # gzip --best -k $out/all.min.js
   '';
 }

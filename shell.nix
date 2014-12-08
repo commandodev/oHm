@@ -8,7 +8,7 @@ let
     };
   };
 in pkgs.callPackage ./. {
-     inherit (haskellPackages) ghc pipes pipesConcurrency ghcjsDom mvc mvcUpdates;
+     inherit (haskellPackages) ghc lens pipes pipesConcurrency ghcjsDom mvc profunctors;
      inherit (node) npm browserify;
      inherit (pkgs) closurecompiler;
    }

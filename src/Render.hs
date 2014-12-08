@@ -1,97 +1,85 @@
-module Render (rootView) where
+{-# LANGUAGE OverloadedStrings #-}
+module Render (
+    rootView
+  , countRender
+  , CountMessage(..)
+  , ChatModel(..)
+  ) where
 
-import GHC.Exts (sortWith)
-import HTML
-import Data.Maybe
+import Data.Functor.Contravariant ((>$), contramap)
+import Control.Lens hiding (children)
+import Francium.HTML
 import Messages
-import MarketData
-import Prelude hiding (div,id,span)
-import Virtual
+import Prelude hiding (div,id,span,map)
+import qualified Prelude as P
+import Francium.HTML ()
+import Francium.DOMEvent
 
-marketDataGraph :: [Market] -> HTML
-marketDataGraph rows =
-  vnodeFull "svg"
-            svgProp
-            (zipWith (curry f)
-                     [(0 :: Int) ..]
-                     rows)
-  where count = length rows
-        closes = mapMaybe close rows
-        highest = maximum closes
-        f (n,r) =
-          rect (Size (show w ++ "%")
-                     (show h ++ "%"))
-               (Position (show x ++ "%")
-                         (show y ++ "%"))
-          where w, h, x, y :: Double
-                x = 100.0 * fromIntegral n / fromIntegral count
-                y = 100 - h
-                w = 100 / fromIntegral count
-                h =
-                  100.0 *
-                  fromMaybe 0 (close r) /
-                  highest
+bootstrapEl :: String -> [HTML] -> HTML
+bootstrapEl cls = with div (classes .= [cls])
 
-marketDataView :: (Market -> Bool) -> Pending [Market] -> HTML
-marketDataView _ NotRequested = span "No data loaded yet. (Press the AJAX button!)"
-marketDataView _ NotFound = span "Data not found. Sadness."
-marketDataView _ Loading = span "Loading marketData...please wait."
-marketDataView _ (LoadFailed e) = span ("Loading marketData failed: " ++ e)
-marketDataView filterFn (Loaded rows) =
-  vnode "div"
-        [marketDataGraph filteredRows,simpleTable marketTableDef filteredRows]
-  where filteredRows =
-          sortWith symbol $
-          filter filterFn rows
+bsCol :: Int -> [HTML] -> HTML
+bsCol n = bootstrapEl $ "col-sm-" ++ (show n)
 
-showMaybe :: Show a => String -> Maybe a -> String
-showMaybe d Nothing = d
-showMaybe _ (Just s) = show s
+container, row, col3 :: [HTML] -> HTML
+container = bootstrapEl "container"
+row = bootstrapEl "row"
+col3 = bsCol 3
+--col9 = bsCol 9
 
-marketTableDef :: TableDef Market
-marketTableDef =
-  [("Latest Trade",show . time . latest_trade)
-  ,("Symbol",symbol)
-  ,("Bid"
-   ,showMaybe "-" .
-    bid)
-  ,("Ask"
-   ,showMaybe "-" .
-    ask)
-  ,("High"
-   ,showMaybe "-" .
-    high)
-  ,("Low"
-   ,showMaybe "-" .
-    low)
-  ,("Close"
-   ,showMaybe "-" .
-    close)
-  ,("Volume"
-   ,showMaybe "-" .
-    volume)
-  ,("Currency Volume"
-   ,\x ->
-      currency x ++
-      " " ++
-      showMaybe "-" (fmap floor (currency_volume x)::Maybe Integer))]
+mkButton :: (() -> IO ()) -> HTML -> HTML
+mkButton msgAction btnTxt = 
+  with button
+    (do
+       classes .= ["button", "btn", "btn-primary"]
+       onClick $ DOMEvent msgAction)
+    [btnTxt]
 
-controls :: (Message -> IO ()) -> HTML
-controls send =
-  vnode "div"
-        [msgButton (IncFst 5) "+(5, 0)"
-        ,msgButton (IncSnd 3) "+(0, 3)"
-        ,msgButton (IncBoth 1 2) "+(1, 2)"
-        ,msgButton (FilterCurrency (Just "USD")) "USD"
-        ,msgButton (FilterCurrency (Just "GBP")) "GBP"
-        ,msgButton (FilterCurrency Nothing) "All"
-        ,msgButton FetchMarket "AJAX"]
-  where msgButton msg =
-          vbutton "button.btn.btn-primary" (\_ -> send msg)
+countRender :: DOMEvent CountMessage -> Int -> HTML
+countRender (DOMEvent sendCount) count =
+  into div
+        [ into span [text $ show count]
+        , msgButton Incr "Inc"
+        , msgButton Decr "Dec"
+        ]
+  where msgButton msg = mkButton (const $ sendCount msg)
 
-rootView :: (Message -> IO ()) -> World -> HTML
-rootView send (a,b,filterFn,marketData) =
-  vnode "div.container"
-            [navbar [vtext "div.navbar-brand" "Demo"]
-            ,row [col3 [controls send],col9 [well [span (show (a,b))]]]
-            ,row [col12 [well [marketDataView filterFn marketData]]]]
+msgRender :: (Name, Said) -> HTML
+msgRender (name, said) =
+  row
+    [ col3 [into strong [text $ name ++ " said: "]]
+    , col3 [into p $ [text said]]
+    ]
+
+messagesRender :: DOMEvent ChatMessage -> ChatModel -> HTML
+messagesRender chan (ChatModel msgs name currentMsg) =
+  container
+    (P.map msgRender msgs ++ [textBoxRender name currentMsg chan])
+  
+
+textBoxRender :: Name -> String -> DOMEvent ChatMessage -> HTML
+textBoxRender name currentMsg saidEvent@(DOMEvent chan) =
+  with div (classes .= ["input-group", "row"])
+        [ with span (do
+                       classes .= ["input-group-addon"])
+                    [text $ "Got Something to say " ++ name ++ "?"]
+        , with input (do
+                        attrs . at "placeholder" ?= "Enter Message"
+                        attrs . at "value" ?= (toJSString currentMsg)
+                        onInput $ contramap Typing saidEvent)
+                     []
+        , mkButton sendMessage "Send Message"
+        ]
+  where addName said = EnterMessage (name, said)
+        sendMessage = const $ chan (addName currentMsg)
+        
+rootView :: DOMEvent Message -> AppModel -> HTML
+rootView chan mdl@(AppModel chatModel count) =
+  container
+    [ with nav (classes .= ["nav", "navbar", "navbar-default"])
+        [with div (classes .= ["navbar-brand"])
+                  ["Demo"]]
+                  
+    , countRender (contramap Count chan) count
+    , messagesRender (contramap Chat chan) chatModel
+    ]
