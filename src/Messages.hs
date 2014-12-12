@@ -1,9 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Messages where
 
+import GHC.Generics
+import Data.Aeson hiding ((.=))
 import Control.Lens
 import Control.Monad.Trans.State
 
@@ -28,7 +31,11 @@ data CountMessage = Incr | Decr deriving (Show)
 
 data ChatMessage = 
    Typing String
- | EnterMessage (Name, Said) deriving Show
+ | EnterMessage (Name, Said)
+ deriving (Show, Generic)
+
+instance ToJSON ChatMessage
+instance FromJSON ChatMessage
 
 
 data Message = 
@@ -57,4 +64,3 @@ processChat (Typing s) model = model & msgBox .~ s
 processChat (EnterMessage message) model = flip execState model $ do
   msgBox .= ""
   messages %= (message:)
-

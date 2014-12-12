@@ -24,20 +24,26 @@ initialModel = AppModel {
   , _counter = 0
   }
 
+
 -- chatRoute :: ChatMessage -> Route a
 -- chatRoute m@(Typing s) = Local m
 -- chatRoute (EnterMessage (name, msg)) = Remote (NewChatMessage name msg)
 
-feedModel :: Output Message -> Consumer Message IO ()
+feedModel :: (Show a) => Output a -> Consumer a IO ()
 feedModel modelIn = forever $ do
   msg <- await
   liftIO $ do
     print msg
     void $ atomically $ send modelIn msg
 
-comp :: Component Message AppModel Message
-comp = Component process rootView feedModel
+
+modelComp :: Component Message AppModel Message
+modelComp = Component process rootView feedModel
+
+chatComp :: Component ChatMessage ChatModel ChatMessage
+chatComp = Component processChat messagesRender feedModel
+
 
 main :: IO ()
 main = do
-  void $ runComponent initialModel comp
+  void $ runComponent initialModel modelComp

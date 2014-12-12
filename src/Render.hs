@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Render (
     rootView
+  , messagesRender
   ) where
 
 import Control.Lens hiding (children)
