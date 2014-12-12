@@ -11,15 +11,7 @@ import Messages
 import Render
 import Component
 
--- | Construct a @HTML@ tree from the world with a callback for clicks
-appModel ::  Model AppModel Message AppModel
-appModel = asPipe $ forever $ do
-  m <- await
-  w <- lift $ get
-  let w' = process m w
-  lift $ put w'
-  yield w'
-  
+
 initialModel :: AppModel
 initialModel = AppModel {
     _chat = ChatModel {
@@ -36,10 +28,16 @@ initialModel = AppModel {
 -- chatRoute m@(Typing s) = Local m
 -- chatRoute (EnterMessage (name, msg)) = Remote (NewChatMessage name msg)
 
+feedModel :: Output Message -> Consumer Message IO ()
+feedModel modelIn = forever $ do
+  msg <- await
+  liftIO $ do
+    print msg
+    void $ atomically $ send modelIn msg
 
 comp :: Component Message AppModel Message
-comp = Component appModel rootView
+comp = Component process rootView feedModel
 
 main :: IO ()
 main = do
-  void $ runComponent initialModel (P.map id)
+  void $ runComponent initialModel comp
