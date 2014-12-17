@@ -2,7 +2,6 @@
 module Main where
 
 import Control.Lens
-import Control.Lens.Prism
 import Pipes
 --import Prelude hiding ((.))
 import Messages
@@ -22,11 +21,6 @@ initialModel = AppModel {
   , _counter = 0
   }
 
-
--- chatRoute :: ChatMessage -> Route a
--- chatRoute m@(Typing s) = Local m
--- chatRoute (EnterMessage (name, msg)) = Remote (NewChatMessage name msg)
-
 type Matcher msg edom ein = (Prism' msg edom, edom -> Producer ein IO ())
 
 feedModel :: CountMessage -> Producer CountMessage IO ()
@@ -38,13 +32,28 @@ chatMessageProcessor :: ChatMessage -> Producer ChatMessage IO ()
 chatMessageProcessor msg = do
   void $ liftIO $ post_ "/test/" msg 
   yield msg
-  
+
 combinedProcessor
-  :: Matcher msg edom1 ein1
-  -> Matcher msg edom2 ein2
+  :: Show msg
+  => Matcher msg edom1 edom1
+  -> Matcher msg edom2 edom2
   -> (msg -> Producer msg IO ())
-combinedProcessor (prsm1, prod1) (prsm2, prod2) = \msg ->
-   over prsm1._Just prod1-- prod1 ~> \m -> yield (m ^. pre prsm1)
+combinedProcessor (prsm1, prod1) (prsm2, prod2) msg = do
+   liftIO $ print msg
+   run prsm1 msg prod1
+   run prsm2 msg prod2
+   -- flip (prsm1) msg (prod1 ~> (yield . review prsm1))
+   -- Expected type: (edom1 -> Proxy X () () msg IO edom1)
+   --              -> msg -> Proxy X () () msg IO ()
+   -- Actual type: (edom1 -> Proxy X () () msg IO edom1)
+   --             -> msg -> Proxy X () () msg IO msg
+   where
+     run :: Prism' msg sub -> msg -> (sub -> Producer sub IO ()) -> Producer msg IO ()
+     run prsm m p = case matching prsm m of
+        Left  _ -> return ()
+        Right x -> for (p x) $ (yield . review prsm)
+--   flip prsm2 msg prod2
+   
   
 modelComp :: Component Message AppModel Message
 modelComp = Component process rootView combined
@@ -58,4 +67,4 @@ chatComp = Component processChat messagesRender chatMessageProcessor
 
 main :: IO ()
 main = do
-  void $ runComponent (_chat initialModel) chatComp -- modelComp
+  void $ runComponent (initialModel) modelComp
