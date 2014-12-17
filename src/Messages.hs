@@ -27,12 +27,20 @@ data AppModel = AppModel {
 makeLenses ''ChatModel
 makeLenses ''AppModel
 
-data CountMessage = Incr | Decr deriving (Show)
+data CountMessage = Incr | Decr deriving (Show, Generic)
+
+makePrisms ''CountMessage
+
+instance ToJSON CountMessage
+instance FromJSON CountMessage
+
 
 data ChatMessage = 
    Typing String
  | EnterMessage (Name, Said)
  deriving (Show, Generic)
+
+makePrisms ''ChatMessage
 
 instance ToJSON ChatMessage
 instance FromJSON ChatMessage
@@ -40,7 +48,12 @@ instance FromJSON ChatMessage
 
 data Message = 
     Count CountMessage
-  | Chat ChatMessage deriving Show
+  | Chat ChatMessage deriving (Show, Generic)
+
+makePrisms ''Message
+  
+instance ToJSON Message
+instance FromJSON Message
 
   
 -- data Message
