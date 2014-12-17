@@ -4,6 +4,7 @@ module Main where
 import Control.Lens
 import Pipes
 --import Prelude hiding ((.))
+import Data.Foldable (traverse_)
 import Messages
 import Render
 import Component
@@ -33,6 +34,7 @@ chatMessageProcessor msg = do
   void $ liftIO $ post_ "/test/" msg 
   yield msg
 
+
 combinedProcessor
   :: Show msg
   => Matcher msg edom1 edom1
@@ -42,6 +44,7 @@ combinedProcessor (prsm1, prod1) (prsm2, prod2) msg = do
    liftIO $ print msg
    run prsm1 msg prod1
    run prsm2 msg prod2
+   traverse_ (prod1 ~> (yield . review prsm1)) $ matching prsm1 msg
    -- flip (prsm1) msg (prod1 ~> (yield . review prsm1))
    -- Expected type: (edom1 -> Proxy X () () msg IO edom1)
    --              -> msg -> Proxy X () () msg IO ()
