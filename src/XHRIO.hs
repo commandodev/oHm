@@ -117,7 +117,7 @@ post = ajax POST
 
 --------------------------------------------------------------------------------
 ajax_ :: (ToJSON a) => Method -> String -> a -> IO Response
-ajax_ =meth url payload = request $ mkRequest meth url payload
+ajax_ meth url payload = request $ mkRequest meth url payload
 
 get_, post_ :: (ToJSON a) => String -> a -> IO Response
 get_ = ajax_ GET

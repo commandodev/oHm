@@ -9,7 +9,7 @@ import Control.Monad.State
 import Control.Monad (void)
 import MVC
 import Francium (HTML, renderTo, DOMEvent, domChannel, newTopLevelContainer)
-import qualified Ajax as Ajax
+
 
 data RestReq a =
      NewChatMessage String String
