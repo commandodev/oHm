@@ -39,24 +39,14 @@ combinedProcessor
   :: Show msg
   => Matcher msg edom1 edom1
   -> Matcher msg edom2 edom2
-  -> (msg -> Producer msg IO ())
-combinedProcessor (prsm1, prod1) (prsm2, prod2) msg = do
+  -> Processor msg msg IO
+combinedProcessor m1 m2 msg = do
    liftIO $ print msg
-   run prsm1 msg prod1
-   run prsm2 msg prod2
-   traverse_ (prod1 ~> (yield . review prsm1)) $ matching prsm1 msg
-   -- flip (prsm1) msg (prod1 ~> (yield . review prsm1))
-   -- Expected type: (edom1 -> Proxy X () () msg IO edom1)
-   --              -> msg -> Proxy X () () msg IO ()
-   -- Actual type: (edom1 -> Proxy X () () msg IO edom1)
-   --             -> msg -> Proxy X () () msg IO msg
+   run m1 msg
+   run m2 msg
    where
-     run :: Prism' msg sub -> msg -> (sub -> Producer sub IO ()) -> Producer msg IO ()
-     run prsm m p = case matching prsm m of
-        Left  _ -> return ()
-        Right x -> for (p x) $ (yield . review prsm)
---   flip prsm2 msg prod2
-   
+     run :: Matcher msg e e -> Processor msg msg IO
+     run (prsm, p) = traverse_ (p ~> (yield . review prsm)) . preview prsm
   
 modelComp :: Component Message AppModel Message
 modelComp = Component process rootView combined
