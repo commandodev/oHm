@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes #-}
 module Render (
     rootView
   , messagesRender
@@ -10,6 +11,7 @@ import Messages
 import Prelude hiding (div,id,span,map)
 import qualified Prelude as P
 import Francium.DOMEvent
+import Component
 
 bootstrapEl :: String -> [HTML] -> HTML
 bootstrapEl cls = with div (classes .= [cls])
@@ -80,13 +82,19 @@ textBoxRender name currentMsg saidEvent@(DOMEvent chan) =
   where addName said = EnterMessage (name, said)
         sendMessage = const $ chan (addName currentMsg)
         
+embedRenderer :: Renderer subE subM -> Prism' e subE -> Lens' m subM -> Renderer e m
+embedRenderer subRenderer prsm l evt mdl = subRenderer converted focussed
+  where
+    converted = contramap (review prsm) evt 
+    focussed = mdl ^. l
+    
 rootView :: DOMEvent Message -> AppModel -> HTML
-rootView chan (AppModel chatModel count) =
+rootView chan m =
   container
     [ with nav (classes .= ["nav", "navbar", "navbar-default"])
        [with div (classes .= ["navbar-brand"])
          ["Demo"]]
                   
-    , countRender (contramap Count chan) count
-    , messagesRender (contramap Chat chan) chatModel
+    , embedRenderer countRender _Count counter chan m
+    , embedRenderer messagesRender _Chat chat chan m
     ]
