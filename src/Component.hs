@@ -15,6 +15,9 @@ data RestReq a =
      NewChatMessage String String
    | Ping
 
+type Renderer edom model = DOMEvent edom -> model -> HTML
+
+type Processor edom ein m = edom -> Producer ein m ()
 
 data Component ein model edom = Component {
    
@@ -22,12 +25,12 @@ data Component ein model edom = Component {
     model :: ein -> model -> model
     
     -- | A renderer for 'Model' creating 'HTML' produces 'DOMEvent's
-  , render :: DOMEvent edom -> model -> HTML
+  , render :: Renderer edom model
   
     -- | A processor of events emitted from the UI
     --
     -- This has the choice of feeding events back into the model
-  , domEventsProcessor :: edom -> Producer ein IO () -- Output ein -> Consumer edom IO ()
+  , domEventsProcessor :: Processor edom ein IO
 
   }
 
