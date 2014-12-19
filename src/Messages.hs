@@ -74,6 +74,6 @@ process (Chat msg) model = model & chat %~ processChat msg
 
 processChat :: ChatMessage -> ChatModel -> ChatModel
 processChat (Typing s) model = model & msgBox .~ s
-processChat (EnterMessage message) model = flip execState model $ do
+processChat (EnterMessage message) model = model &~ do
   msgBox .= ""
   messages %= (message:)

@@ -5,6 +5,7 @@ module XHRIO where
 
 import Control.Arrow
 import Control.Concurrent.STM
+import Control.Lens
 import Control.Monad (void)
 import Data.Aeson (ToJSON, FromJSON)
 import qualified Data.Aeson as Aeson
@@ -99,6 +100,12 @@ foreign import javascript unsafe
  "$1.responseText"
  jsXHRGetResponseText :: JSRef XHR -> IO JSString
 
+
+_JSON :: (ToJSON a, FromJSON a) => Prism' JSString a
+_JSON = prism' encode' decode'
+  where encode' = toJSString . C8.unpack . BSL.toStrict . Aeson.encode
+        decode' = Aeson.decode . BSL.fromStrict . C8.pack . fromJSString
+        
 --------------------------------------------------------------------------------
 ajax :: (ToJSON a, FromJSON b) => Method -> String -> a -> Output b -> IO ()
 ajax meth url payload output = do
