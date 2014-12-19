@@ -1,6 +1,8 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 module Component where
 
 import Control.Lens
@@ -17,7 +19,10 @@ data RestReq a =
 
 type Renderer edom model = DOMEvent edom -> model -> HTML
 
-type Processor edom ein m = edom -> Producer ein m ()
+newtype Processor edom ein m = Processor
+  { 
+    runProcessor :: edom -> Producer ein m ()
+  } deriving (Monoid)
 
 data Component ein model edom = Component {
    
@@ -51,7 +56,7 @@ runComponent s Component{..} = do
   (domSink, domSource) <- spawn Unbounded
   (modelSink, modelSource) <- spawn Unbounded
   let render' = render (domChannel domSink)
-  void . forkIO . runEffect $ for (fromInput domSource) domEventsProcessor
+  void . forkIO . runEffect $ for (fromInput domSource) (runProcessor domEventsProcessor)
                            >-> toOutput modelSink
   runMVC s (appModel model) $ managed $ \k -> do
     componentEl <- newTopLevelContainer
