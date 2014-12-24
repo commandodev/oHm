@@ -3,8 +3,7 @@
 
 nix-shell -I . shell.nix \
   --command 'ghcjs -O3 -Wall \
-                   -o Main \
                    -outputdir build \
-                   src/Internal/*.hs \
-                   src/*.hs \
+                   src/Ohm/Internal/*.hs \
+                   src/Ohm/*.hs \
                    build/vendor.js'

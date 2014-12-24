@@ -10,11 +10,11 @@ let haskellPackages = pkgs.haskellPackages_ghcjs.override {
       };
     };
 in pkgs.callPackage ./. {
-     inherit (haskellPackages) cabal aeson ghcjsBase ghcjsDom ghcjsPrim lens mvc pipes
- pipesConcurrency profunctors stm time;
+     cabal = haskellPackages.cabal.override {
+       extension = self: super: { 
+         buildTools = super.buildTools ++ [ haskellPackages.ghc.ghc.parent.cabalInstallGhcjs ]; 
+       };
+     };
+     inherit (haskellPackages) aeson ghcjsBase ghcjsDom ghcjsPrim lens mvc pipes
+                               pipesConcurrency profunctors stm time;
    }
-
-
-# in lib.overrideDerivation haskellPackages.oHm (attrs: {
-#      buildInputs = [ haskellPackages.cabalInstall_1_20_0_3 ] ++ attrs.buildInputs;
-#    })

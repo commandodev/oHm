@@ -14,26 +14,32 @@ cabal-version:       >=1.10
 
 Library
   exposed-modules:
-       Component
-     , HTML
-     , SocketIO
-     , XHRIO
-     , Internal.HTML
-     , Internal.DOMEvent
+       Ohm.Component
+     , Ohm.HTML
+     , Ohm.SocketIO
+     , Ohm.XHRIO
+     , Ohm.Internal.HTML
+     , Ohm.Internal.DOMEvent
+     , Ohm.Internal.Immutable
   -- other-modules:
   other-extensions:    ForeignFunctionInterface, GeneralizedNewtypeDeriving, OverloadedStrings
   build-depends:       base >=4.7 && <4.8
+                     , aeson > 0.8
+                     , bytestring >= 0.10.4.1
                      , containers >=0.5 && <0.6
-                     , stm >=2.4 && <2.5
+                     , contravariant >= 1.2
+                     , ghcjs-base >= 0.1
+                     , ghcjs-dom >=0.1.1.1
+                     , ghcjs-prim >= 0.1.0.0
                      , lens >= 4.6.0.1
-                     , profunctors >= 4.3.2
+                     , mtl >= 2.2.1
+                     , mvc >= 1.0.1
                      , pipes >= 4.0
                      , pipes-concurrency >= 2.0
-                     , aeson > 0.8
+                     , profunctors >= 4.3.2
+                     , split >= 0.2.2
+                     , stm >=2.4 && <2.5
                      , time > 1.4
-                     , mvc >= 1.0.1
-                     , ghcjs-base >= 0.1
-                     , ghcjs-prim >= 0.1.0.0
-                     , ghcjs-dom >=0.1.1.1
+                     , transformers >= 0.4.1.0
   hs-source-dirs:      src
   default-language:    Haskell2010
