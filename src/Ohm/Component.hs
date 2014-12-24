@@ -15,7 +15,7 @@ module Ohm.Component
 import Control.Monad.Trans.Reader
 import Control.Monad.State
 import MVC
-import HTML (Renderer, domChannel, newTopLevelContainer, renderTo)
+import Ohm.HTML (Renderer, domChannel, newTopLevelContainer, renderTo)
 
 newtype Processor edom ein m = Processor
   { 
