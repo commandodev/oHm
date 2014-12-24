@@ -1,4 +1,4 @@
-module Francium.DOMEvent (
+module Internal.DOMEvent (
     DOMEvent(..)
   , domChannel
   , clickChannel

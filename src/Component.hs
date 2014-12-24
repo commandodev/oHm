@@ -4,19 +4,18 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Component where
+module Component
+  (
+    Processor(..)
+  , Component(..)
+  , appModel
+  , runComponent
+  ) where
 
 import Control.Monad.Trans.Reader
 import Control.Monad.State
 import MVC
-import Francium (HTML, renderTo, DOMEvent, domChannel, newTopLevelContainer)
-
-
-data RestReq a =
-     NewChatMessage String String
-   | Ping
-
-type Renderer edom model = DOMEvent edom -> model -> HTML
+import HTML (Renderer)
 
 newtype Processor edom ein m = Processor
   { 
@@ -35,7 +34,6 @@ data Component env ein model edom = Component {
     --
     -- This has the choice of feeding events back into the model
   , domEventsProcessor :: Processor edom ein (ReaderT env IO)
-
   }
 
 appModel :: (e -> m -> m) ->  Model m e m

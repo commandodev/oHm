@@ -1,5 +1,5 @@
 {-# LANGUAGE TypeFamilies #-}
-module Immutable
+module Internal.Immutable
   ( Map
   , empty
   , insert

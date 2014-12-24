@@ -1,32 +1,15 @@
-{ stdenv, ghc, lens, pipes, pipesConcurrency, ghcjsDom, mvc, profunctors, npm, browserify, closurecompiler
+{ cabal, aeson, ghcjsBase, mvc, pipes, pipesConcurrency, stm, time
 }:
-stdenv.mkDerivation {
-  name = "bell-ringer";
-  version = "1.0";
+
+cabal.mkDerivation (self: {
+  pname = "oHm";
+  version = "0.1.0.0";
   src = ./.;
-  buildInputs = [ ghc ghcjsDom lens pipes pipesConcurrency mvc profunctors npm browserify closurecompiler];
-  buildPhase = ''
-    mkdir -p node_modules
-    HOME=$(pwd) npm install
-    mkdir -p build
-    browserify src/deps.js -o build/vendor.js
-    ghcjs -O3 -Wall       \
-          -outputdir build \
-          -DGHCJS_BROWSER \
-          -o Main         \
-          build/vendor.js \
-          vendor/*.js \
-          src/*.hs \
-          src/Francium/*.hs
-  '';
-  installPhase = ''
-    mkdir -p $out
-    cp node_modules/twitter-bootstrap-3.0.0/dist/css/bootstrap.min.css $out
-    cp src/index.html $out
-    cp data/markets.json $out
-    cp -R Main.jsexe/*.js $out/
-    cp -R vendor/*.js $out/
-    # closure-compiler $out/all.js --compilation_level=ADVANCED_OPTIMIZATIONS > $out/all.min.js
-    # gzip --best -k $out/all.min.js
-  '';
-}
+  buildDepends = [
+    aeson ghcjsBase mvc pipes pipesConcurrency stm time
+  ];
+  meta = {
+    license = self.stdenv.lib.licenses.unfree;
+    platforms = self.ghc.meta.platforms;
+  };
+})
