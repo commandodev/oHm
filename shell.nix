@@ -5,6 +5,7 @@ let
     extension = self: super: {
       mvc = self.callPackage ./mvc.nix {};
       mvcUpdates = self.callPackage ./mvc-updates.nix {};
+      chatExample = self.callPackage ./chat-example {};
     };
   };
 in pkgs.callPackage ./. {

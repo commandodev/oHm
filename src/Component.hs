@@ -2,13 +2,12 @@
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Component where
 
-import Control.Lens
-import Control.Applicative
+import Control.Monad.Trans.Reader
 import Control.Monad.State
-import Control.Monad (void)
 import MVC
 import Francium (HTML, renderTo, DOMEvent, domChannel, newTopLevelContainer)
 
@@ -24,7 +23,7 @@ newtype Processor edom ein m = Processor
     runProcessor :: edom -> Producer ein m ()
   } deriving (Monoid)
 
-data Component ein model edom = Component {
+data Component env ein model edom = Component {
    
     -- | The processing function of a 'Model' for this component
     model :: ein -> model -> model
@@ -35,7 +34,7 @@ data Component ein model edom = Component {
     -- | A processor of events emitted from the UI
     --
     -- This has the choice of feeding events back into the model
-  , domEventsProcessor :: Processor edom ein IO
+  , domEventsProcessor :: Processor edom ein (ReaderT env IO)
 
   }
 
@@ -49,28 +48,31 @@ appModel fn = asPipe $ forever $ do
   
 
 runComponent
-  ::  model 
-  -> Component ein model edom
-  -> IO model
-runComponent s Component{..} = do
+  ::  forall model env ein edom. (Show model)
+  => model 
+  -> env
+  -> Component env ein model edom
+  -> IO (Output ein)
+runComponent s env Component{..} = do
   (domSink, domSource) <- spawn Unbounded
   (modelSink, modelSource) <- spawn Unbounded
-  let render' = render (domChannel domSink)
-  void . forkIO . runEffect $ for (fromInput domSource) (runProcessor domEventsProcessor)
-                           >-> toOutput modelSink
-  runMVC s (appModel model) $ managed $ \k -> do
-    componentEl <- newTopLevelContainer
-    renderTo componentEl $ render' s
-    k (asSink (renderTo componentEl . render'), asInput modelSource)
-    
-    
-mergeIO :: [Producer a IO ()] -> Producer a IO ()
-mergeIO producers = do
-    (output, input) <- liftIO $ spawn Unbounded
-    _ <- liftIO $ mapM (fork output) producers
-    fromInput input
+  
+  runEvents $ for (fromInput domSource) (runProcessor domEventsProcessor)
+           >-> (toOutput modelSink)
+  void . forkIO . void $ runMVC s (appModel model) $ app modelSource domSink
+  return modelSink
   where
-    fork :: Output a -> Producer a IO () -> IO ()
-    fork output producer = void $ forkIO $ do runEffect $ producer >-> toOutput output
-                                              performGC
-    
+    runEvents :: Effect (ReaderT env IO) () -> IO ()
+    runEvents = void . forkIO . (flip runReaderT $ env) . runEffect
+    app :: Input ein -> Output edom -> Managed (View model, Controller ein)
+    app eventSource domSink = managed $ \k -> do
+      let render' = render (domChannel domSink)
+      componentEl <- newTopLevelContainer
+      renderTo componentEl $ render' s
+      k (asSink (debugRender render' componentEl), asInput eventSource)
+    --debugRender :: ()
+    debugRender f el mdl = do
+      print mdl
+      renderTo el $ f mdl
+      
+

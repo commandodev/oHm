@@ -6,11 +6,8 @@
 #endif
 module SocketIO where
 
-import Control.Concurrent.STM
-import Control.Monad (void)
 import Data.Aeson (FromJSON(..), ToJSON(..))
 import qualified Data.Aeson as Aeson
-import Pipes.Concurrent
 import GHCJS.Foreign
 import GHCJS.Marshal
 import GHCJS.Types
@@ -39,6 +36,12 @@ foreign import javascript unsafe
   "$1.emit($2, $3);"
   socketIOEmit :: SocketIO -> JSString -> JSRef x -> IO ()
 
+
+foreign import javascript unsafe
+  "$1.emit($2);"
+  socketIOEmit_ :: SocketIO -> JSString -> IO ()
+
+
 foreign import javascript unsafe
   "$1.io.disconnect()"
   socketIODisconnect :: SocketIO -> IO ()
@@ -56,11 +59,15 @@ foreign import javascript unsafe
 sioSend :: (ToJSON a) => SocketIO -> String -> a -> IO ()
 sioSend sio chan a = socketIOEmit sio (toJSString chan) =<< (toJSRef $ toJSON a)
 
-sioSub :: (FromJSON a) => SocketIO -> String -> Output a -> IO ()
+sioSend_ :: SocketIO -> String -> IO ()
+sioSend_ sio chan = socketIOEmit_ sio (toJSString chan)
+
+
+sioSub :: (FromJSON a) => SocketIO -> String -> (a -> IO ()) -> IO ()
 sioSub sio chan outPut = do
   callback <- syncCallback1 AlwaysRetain True $ \msg -> do
     Just ref <- fromJSRef msg
     case Aeson.fromJSON ref of 
-      Aeson.Success a ->  void $ atomically $ send outPut a 
+      Aeson.Success a ->  outPut a 
       Aeson.Error s   -> putStrLn $ "Couldn't decode message on " ++ chan ++ ": " ++ s
   socketIOOn sio (toJSString chan) callback
