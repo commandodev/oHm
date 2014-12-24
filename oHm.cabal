@@ -25,11 +25,15 @@ Library
   build-depends:       base >=4.7 && <4.8
                      , containers >=0.5 && <0.6
                      , stm >=2.4 && <2.5
+                     , lens >= 4.6.0.1
+                     , profunctors >= 4.3.2
                      , pipes >= 4.0
                      , pipes-concurrency >= 2.0
                      , aeson > 0.8
                      , time > 1.4
                      , mvc >= 1.0.1
                      , ghcjs-base >= 0.1
+                     , ghcjs-prim >= 0.1.0.0
+                     , ghcjs-dom >=0.1.1.1
   hs-source-dirs:      src
   default-language:    Haskell2010
