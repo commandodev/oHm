@@ -1,6 +1,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE RankNTypes #-}
-module HTML
+module Ohm.HTML
   ( -- * bootstrap operators
     bootstrapEl
   , container, row, col3, col6, col9
@@ -14,13 +14,13 @@ module HTML
     
     -- * Re-exported modules
   , module Control.Applicative
-  , module Internal.HTML
-  , module Internal.DOMEvent
+  , module Ohm.Internal.HTML
+  , module Ohm.Internal.DOMEvent
   , lmap, dimap
   ) where
 import Prelude hiding (div, head, map, mapM, sequence, span)
-import Internal.HTML
-import Internal.DOMEvent
+import Ohm.Internal.HTML
+import Ohm.Internal.DOMEvent
 import Control.Applicative
 import Control.Lens
 --import Data.Profunctor

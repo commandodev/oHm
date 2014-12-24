@@ -1,7 +1,7 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE InterruptibleFFI #-}
 {-# LANGUAGE RecordWildCards #-}
-module XHRIO where
+module Ohm.XHRIO where
 
 import Control.Arrow
 import Control.Concurrent.STM

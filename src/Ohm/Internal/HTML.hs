@@ -2,7 +2,7 @@
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Internal.HTML
+module Ohm.Internal.HTML
   ( html, head, title, base, link, meta, style, script, noscript, body, section, nav, article, aside, h1, h2, h3, h4, h5, h6, hgroup, header, footer, address, p, hr, pre, blockquote, ol, ul, li, dl, dt, dd, figure, figcaption, div, a, em, strong, small, s, cite, q, dfn, abbr, data_, time, code, var, samp, kbd, sub, sup, i, b, u, mark, ruby, rt, rp, bdi, bdo, span, br, wbr, ins, del, img, iframe, embed, object, param, video, audio, source, track, canvas, map, area, table, caption, colgroup, col, tbody, thead, tfoot, tr, td, th, form, fieldset, legend, label, input, button, select, datalist, optgroup, option, textarea, keygen, output, progress, meter, details, summary, command, menu, dialog
 
   , HTML
@@ -28,14 +28,14 @@ import Data.Coerce (coerce)
 import Data.IORef
 import Data.Maybe
 import Data.String (IsString(..))
-import Internal.DOMEvent
+import Ohm.Internal.DOMEvent
 import GHCJS.DOM
 import GHCJS.DOM.Document
 import GHCJS.DOM.Element
 import GHCJS.DOM.Node
 import GHCJS.Foreign
 import GHCJS.Types
-import qualified Internal.Immutable as Immutable
+import qualified Ohm.Internal.Immutable as Immutable
 import Prelude hiding (div, head, map, mapM, sequence, span)
 import System.IO.Unsafe
 

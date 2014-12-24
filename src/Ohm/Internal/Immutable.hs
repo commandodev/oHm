@@ -1,5 +1,5 @@
 {-# LANGUAGE TypeFamilies #-}
-module Internal.Immutable
+module Ohm.Internal.Immutable
   ( Map
   , empty
   , insert

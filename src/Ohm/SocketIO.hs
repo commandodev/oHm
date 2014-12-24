@@ -4,7 +4,7 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE InterruptibleFFI #-}
 #endif
-module SocketIO where
+module Ohm.SocketIO where
 
 import Data.Aeson (FromJSON(..), ToJSON(..))
 import qualified Data.Aeson as Aeson
