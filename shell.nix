@@ -5,6 +5,8 @@ let haskellPackages = pkgs.haskellPackages_ghcjs.override {
       extension = self: super: {
         oHm = self.callPackage ./. {};
         mvc = self.callPackage ./mvc.nix {};
+        # cabal = self.callPackage ./cabal.nix {};
+        # cabalInstall_1_22_0_0 = self.callPackage ./cabal-install.nix {};
       };
     };
 in pkgs.callPackage ./. {
