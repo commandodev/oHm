@@ -28,14 +28,14 @@ import Data.Coerce (coerce)
 import Data.IORef
 import Data.Maybe
 import Data.String (IsString(..))
-import Francium.DOMEvent
+import Internal.DOMEvent
 import GHCJS.DOM
 import GHCJS.DOM.Document
 import GHCJS.DOM.Element
 import GHCJS.DOM.Node
 import GHCJS.Foreign
 import GHCJS.Types
-import Immutable
+import qualified Internal.Immutable as Immutable
 import Prelude hiding (div, head, map, mapM, sequence, span)
 import System.IO.Unsafe
 

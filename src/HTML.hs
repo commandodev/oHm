@@ -4,22 +4,26 @@ module HTML
   ( -- * bootstrap operators
     bootstrapEl
   , container, row, col3, col6, col9
+    
+    -- * Utilities
   , mkButton
   , embedRenderer
+    
+    -- * Types
+  , Renderer
+    
     -- * Re-exported modules
   , module Control.Applicative
   , module Internal.HTML
   , module Internal.DOMEvent
   , lmap, dimap
   ) where
-
-import Prelude hiding (div, mapM, sequence)
-
-import Data.Profunctor
+import Prelude hiding (div, head, map, mapM, sequence, span)
 import Internal.HTML
 import Internal.DOMEvent
 import Control.Applicative
-import Control.Monad.IO.Class
+import Control.Lens
+--import Data.Profunctor
 
 type Renderer edom model = DOMEvent edom -> model -> HTML
 
@@ -29,7 +33,7 @@ bootstrapEl cls = with div (classes .= [cls])
 bsCol :: Int -> [HTML] -> HTML
 bsCol n = bootstrapEl $ "col-sm-" ++ (show n)
 
-container, row, col3, col6 :: [HTML] -> HTML
+container, row, col3, col6, col9 :: [HTML] -> HTML
 container = bootstrapEl "container"
 row = bootstrapEl "row"
 col3 = bsCol 3
