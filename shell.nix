@@ -8,5 +8,5 @@ let haskellPackages = pkgs.haskellPackages_ghcjs.override {
       };
     };
 in lib.overrideDerivation haskellPackages.oHm (attrs: {
-     buildInputs = [ haskellPackages.cabalInstall ] ++ attrs.buildInputs;
+     buildInputs = [ haskellPackages.cabalInstall_1_20_0_3 ] ++ attrs.buildInputs;
    })
