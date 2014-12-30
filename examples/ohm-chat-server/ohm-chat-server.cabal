@@ -31,7 +31,7 @@ Executable chat-snap
   build-depends:
     aeson,
     base,
-    chat,
+    ohm-chat-server,
     engine-io,
     engine-io-snap,
     snap-core,
@@ -41,7 +41,7 @@ Executable chat-snap
     text,
     transformers
   main-is: MainSnap.hs
-  other-modules: Paths_chat Chat
+  other-modules: Paths_ohm_chat_server Chat
   ghc-options: -Wall -O2 -threaded
 
 

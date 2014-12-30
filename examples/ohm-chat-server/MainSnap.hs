@@ -12,7 +12,7 @@ import qualified Snap.Util.FileServe as Snap
 import qualified Snap.Http.Server as Snap
 import qualified Network.SocketIO as SocketIO
 
-import Paths_chat (getDataDir)
+import Paths_ohm_chat_server (getDataDir)
 
 main :: IO ()
 main = do
