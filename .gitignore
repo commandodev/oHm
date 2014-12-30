@@ -1,6 +1,6 @@
 dist
 node_modules
-/Main.jsexe/
+Main.jsexe
 .tern-port
 build
 .cabal-deps
