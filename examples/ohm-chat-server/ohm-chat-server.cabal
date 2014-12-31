@@ -38,6 +38,7 @@ Executable chat-snap
       engine-io,
       engine-io-snap,
       snap-core,
+      snap-cors,
       snap-server,
       socket-io,
       stm,
