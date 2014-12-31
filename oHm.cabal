@@ -42,4 +42,15 @@ Library
                      , time > 1.4
                      , transformers >= 0.4.1.0
   hs-source-dirs:      src
+  js-sources:        vendor/change-event.js
+                   , vendor/dom-delegator.js
+                   , vendor/ev-hook.js
+                   , vendor/h.js
+                   , vendor/immutable.min.js
+                   , vendor/socket.io.js
+                   , vendor/underscore-min.js
+                   , vendor/vdom.js
+                   , vendor/virtualdom.js
+                   , vendor/vnode.js
+                   , vendor/vtext.js
   default-language:    Haskell2010
