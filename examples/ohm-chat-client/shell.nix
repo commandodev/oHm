@@ -4,7 +4,7 @@ let haskellPackages = pkgs.haskellPackages_ghcjs.override {
         oHm = self.callPackage ./oHm {};
         mvc = self.callPackage ./oHm/mvc.nix {};
         ohmChatServer = self.callPackage ./chat-server.nix {};
-        client = self.callPackage ./. {};
+        # client = self.callPackage ./. {};
         # cabal = self.callPackage ./cabal.nix {};
         # cabalInstall_1_22_0_0 = self.callPackage ./cabal-install.nix {};
       };
@@ -16,11 +16,14 @@ let haskellPackages = pkgs.haskellPackages_ghcjs.override {
 
 
 in pkgs.callPackage ./. {
-     cabal = haskellPackages.cabal.override {
-       extension = self: super: { 
-         buildTools = super.buildTools ++ [ haskellPackages.ghc.ghc.parent.cabalInstallGhcjs ]; 
-       };
-     };
+     # cabal = haskellPackages.cabal.override {
+     #   extension = self: super: { 
+     #     buildTools = super.buildTools ++ [ haskellPackages.ghc.ghc.parent.cabalInstallGhcjs ]; 
+     #   };
+     # }; 
      inherit (haskellPackages) aeson ghcjsBase ghcjsDom ghcjsPrim oHm ohmChatServer lens mvc pipes
-                               pipesConcurrency profunctors stm time;
+                               pipesConcurrency profunctors;
+     inherit (node) npm browserify;
+     inherit (pkgs) closurecompiler;
+
    }
