@@ -3,7 +3,7 @@
 cabal.mkDerivation (self: {
   pname = "chat-example";
   version = "1.0.0";
-  src = ./.;
+  src = ../ohm-chat-server;
   buildDepends = [
     aeson 
   ];

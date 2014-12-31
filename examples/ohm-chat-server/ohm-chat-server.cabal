@@ -9,11 +9,11 @@ category: Web
 build-type: Simple
 cabal-version: >=1.20
 
-Data-Dir: resources
-Data-files:
-  index.html
-  main.js
-  style.css
+-- Data-Dir: resources
+-- Data-files:
+--   index.html
+--   main.js
+--   style.css
 
 Library
   exposed-modules: ChatTypes
@@ -28,18 +28,21 @@ Library
 
 Executable chat-snap
   default-language: Haskell2010
-  build-depends:
-    aeson,
-    base,
-    ohm-chat-server,
-    engine-io,
-    engine-io-snap,
-    snap-core,
-    snap-server,
-    socket-io,
-    stm,
-    text,
-    transformers
+  if impl(ghcjs)
+    buildable: False
+  if !impl(ghcjs)
+    build-depends:
+      aeson,
+      base,
+      ohm-chat-server,
+      engine-io,
+      engine-io-snap,
+      snap-core,
+      snap-server,
+      socket-io,
+      stm,
+      text,
+      transformers
   main-is: MainSnap.hs
   other-modules: Paths_ohm_chat_server Chat
   ghc-options: -Wall -O2 -threaded
