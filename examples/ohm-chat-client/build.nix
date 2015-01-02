@@ -24,6 +24,7 @@ let haskellPackages = pkgs.haskellPackages_ghcjs.override {
                       ];
         buildPhase = ''
           mkdir -p node_modules
+          HOME=$(pwd) npm update
           HOME=$(pwd) npm install
           mkdir -p build
           # browserify src/deps.js -o build/vendor.js
