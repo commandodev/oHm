@@ -67,7 +67,7 @@ runComponent s env Component{..} = do
       let render' = render (domChannel domSink)
       componentEl <- newTopLevelContainer
       renderTo componentEl $ render' s
-      k (asSink (debugRender render' componentEl), asInput eventSource)
+      k (asSink (renderTo componentEl . render'), asInput eventSource)
     --debugRender :: ()
     debugRender f el mdl = do
       print mdl
