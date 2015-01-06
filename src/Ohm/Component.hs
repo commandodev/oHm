@@ -7,6 +7,7 @@
 module Ohm.Component
   (
     Processor(..)
+  , idProcessor
   , Component(..)
   , appModel
   , runComponent
@@ -21,6 +22,9 @@ newtype Processor edom ein m = Processor
   { 
     runProcessor :: edom -> Producer ein m ()
   } deriving (Monoid)
+
+idProcessor :: (Monad m) => Processor e e m
+idProcessor = Processor yield
 
 data Component env ein model edom = Component {
    
