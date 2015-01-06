@@ -13,6 +13,7 @@ module Ohm.Internal.HTML
   , into
 
   , onClick
+  , onChange
   , onInput
   , renderTo
   , newTopLevelContainer
@@ -205,6 +206,11 @@ foreign import javascript safe
   vnodeSetClickEv :: HTML -> JSRef a -> HTML
 
 foreign import javascript safe
+  "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-change', evHook($2)).toJS(), $1.children)"
+  vnodeSetChangeEv :: HTML -> JSRef a -> HTML
+
+
+foreign import javascript safe
   "new VNode($1.tagName, Immutable.Map($1.properties).set('name', 'stub').set('ev-input', evHook(changeEvent($2))).toJS(), $1.children)"
   vnodeSetInputEv :: HTML -> JSRef a -> HTML
 
@@ -213,6 +219,9 @@ foreign import javascript safe
 
 onClick :: MonadState HTML m => DOMEvent () -> m ()
 onClick = modify . (setDOMEvent vnodeSetClickEv $ void . preventDefault)
+
+onChange :: MonadState HTML m => DOMEvent () -> m ()
+onChange = modify . (setDOMEvent vnodeSetChangeEv $ void . preventDefault)
 
 onInput :: MonadState HTML m => DOMEvent String -> m ()
 onInput = modify . (setDOMEvent vnodeSetInputEv $ return . fromJSString . getStubValue)
