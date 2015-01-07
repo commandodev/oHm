@@ -11,6 +11,7 @@ module Ohm.Component
   , Component(..)
   , appModel
   , runComponent
+  , runComponentDebug
   ) where
 
 import Control.Monad.Trans.Reader
@@ -25,6 +26,9 @@ newtype Processor edom ein m = Processor
 
 idProcessor :: (Monad m) => Processor e e m
 idProcessor = Processor yield
+
+
+--------------------------------------------------------------------------------
 
 data Component env ein model edom = Component {
    
@@ -47,15 +51,18 @@ appModel fn = asPipe $ forever $ do
   let w' = fn m w
   lift $ put w'
   yield w'
-  
 
-runComponent
+  
+--------------------------------------------------------------------------------
+
+runComponent'
   ::  forall model env ein edom. (Show model)
-  => model 
+  => (model -> IO ())
+  -> model
   -> env
   -> Component env ein model edom
   -> IO (Output ein)
-runComponent s env Component{..} = do
+runComponent' dbg s env Component{..} = do
   (domSink, domSource) <- spawn Unbounded
   (modelSink, modelSource) <- spawn Unbounded
   
@@ -71,10 +78,24 @@ runComponent s env Component{..} = do
       let render' = render (domChannel domSink)
       componentEl <- newTopLevelContainer
       renderTo componentEl $ render' s
-      k (asSink (renderTo componentEl . render'), asInput eventSource)
+      k (asSink (debugRender render' componentEl), asInput eventSource)
     --debugRender :: ()
     debugRender f el mdl = do
-      print mdl
+      dbg mdl
       renderTo el $ f mdl
-      
 
+runComponentDebug
+  ::  forall model env ein edom. (Show model)
+  => model
+  -> env
+  -> Component env ein model edom
+  -> IO (Output ein)      
+runComponentDebug = runComponent' print
+
+runComponent
+  ::  forall model env ein edom. (Show model)
+  => model
+  -> env
+  -> Component env ein model edom
+  -> IO (Output ein)      
+runComponent = runComponent' (void . return)
