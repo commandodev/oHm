@@ -3,6 +3,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE RankNTypes #-}
 
 module Ohm.Component
   (
@@ -15,11 +16,12 @@ module Ohm.Component
   , runComponentDebug
   ) where
 
-import Control.Lens (Prism')
+import Control.Lens (Prism', preview)
 import Control.Monad.Trans.Reader
 import Control.Monad.State
+import Data.Foldable (traverse_)
 import Data.Profunctor
-import MVC
+import MVC hiding (handles)
 import Ohm.HTML (Renderer, domChannel, newTopLevelContainer, renderTo)
 import Pipes ((~>))
 
@@ -61,11 +63,9 @@ data Component env ein model edom = Component {
 
 appModel :: (e -> m -> m) ->  Model m e m
 appModel fn = asPipe $ forever $ do
-  m <- await
-  w <- lift $ get
-  let w' = fn m w
-  lift $ put w'
-  yield w'
+  e <- await
+  lift $ modify (fn e)
+  yield =<< lift get
 
   
 --------------------------------------------------------------------------------
