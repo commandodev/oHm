@@ -8,24 +8,39 @@ module Ohm.Component
   (
     Processor(..)
   , idProcessor
+  , handles
   , Component(..)
   , appModel
   , runComponent
   , runComponentDebug
   ) where
 
+import Control.Lens (Prism')
 import Control.Monad.Trans.Reader
 import Control.Monad.State
+import Data.Profunctor
 import MVC
 import Ohm.HTML (Renderer, domChannel, newTopLevelContainer, renderTo)
+import Pipes ((~>))
 
-newtype Processor edom ein m = Processor
+newtype Processor m edom ein = Processor
   { 
     runProcessor :: edom -> Producer ein m ()
   } deriving (Monoid)
 
-idProcessor :: (Monad m) => Processor e e m
+idProcessor :: (Monad m) => Processor m e e
 idProcessor = Processor yield
+
+instance (Monad m) => Functor (Processor m ein) where
+  fmap f (Processor p) = Processor (p ~> yield . f)
+
+instance (Monad m) => Profunctor (Processor m) where
+  lmap f (Processor p) = Processor (p . f)
+  rmap = fmap
+  
+-- | Use a Prism to determine which part of a message to handle
+handles :: Monad m => Prism' b a -> Processor m a c -> Processor m b c  
+handles prism p = Processor $ traverse_ (runProcessor p) . preview prism
 
 
 --------------------------------------------------------------------------------
@@ -41,7 +56,7 @@ data Component env ein model edom = Component {
     -- | A processor of events emitted from the UI
     --
     -- This has the choice of feeding events back into the model
-  , domEventsProcessor :: Processor edom ein (ReaderT env IO)
+  , domEventsProcessor :: Processor (ReaderT env IO) edom ein
   }
 
 appModel :: (e -> m -> m) ->  Model m e m
