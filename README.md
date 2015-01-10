@@ -1,4 +1,26 @@
-
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. oHm Om with Haskell in the middle</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Introduction</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1. Set up</a></li>
+<li><a href="#sec-1-1-2">1.1.2. Concepts</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2. Examples</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1. Todo MVC</a></li>
+<li><a href="#sec-1-2-2">1.2.2. Socket.IO Chat</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 # oHm Om with Haskell in the middle
 
 Om is awesome. oHm is a hommage to Om in GHCJS using Haskell's pipes,
@@ -32,6 +54,8 @@ that architectural idea to Haskell.
         `mdlEvent -> model -> model` which is a left fold function that
         applies a to the Model resulting in the new Model. This
         function is one of the things you need to construct a .
+        
+        <a id="model-fold" name="model-fold"></a>
     
     2.  Fold
     

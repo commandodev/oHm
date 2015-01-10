@@ -28,6 +28,7 @@ In addition to the model you also need a updating function of type
 applies a [[Model Event]] to the Model resulting in the new Model. This
 function is one of the things you need to construct a [[Component]].
 
+<<model-fold>>
 ***** Fold
 Here's the model function from our [[Todo MVC][todo mvc]] example:
 
@@ -53,7 +54,7 @@ new state. In oHm construction of an MVC Model happens with the
 **** Model Events
 Model Events represent events that happen in your domain to effect
 change to the state of the world. This is the =Action= type mentioned
-in the [[Fold][event -> model -> model]] function earlier:
+in the [[model-fold][event -> model -> model]] function earlier:
 
 #+BEGIN_SRC haskell
 
