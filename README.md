@@ -32,8 +32,8 @@ that architectural idea to Haskell.
         `mdlEvent -> model -> model` which is a left fold function that
         applies a to the Model resulting in the new Model. This
         function is one of the things you need to construct a .
-        
-        <a id="model-fold" name="
+    
+    2.  <a id="fold" name="fold"></a>Fold
     
         Here's the model function from our todo mvc example:
         
