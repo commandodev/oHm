@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>README</title>
+<!-- 2015-01-13 Tue 08:44 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Ben Ford" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">README</h1>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> oHm Om with Haskell in the middle</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Om is awesome. oHm is a hommage to Om in GHCJS using Haskell's pipes,
+mvc and pipes-concurrent libraries.
+</p>
+</div>
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Introduction</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Ohm at its core is the idea of building an application as a pure left
+fold over a stream of events. At a previous position we built a UI
+that captured this model in clojurescript and Om, this is a port of
+that architectural idea to Haskell.
+</p>
+</div>
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Set up</h4>
+</div>
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Concepts</h4>
+<div class="outline-text-4" id="text-1-1-2">
+</div><ol class="org-ol"><li>Models<br  /><div class="outline-text-5" id="text-1-1-2-1">
+<p>
+Models are the state of your application. Here's the Model from the
+<a href="#sec-1-2-1">todo mvc</a> example mentioned later:
+</p>
+</div>
+
+<ol class="org-ol"><li>State<br  /><div class="outline-text-6" id="text-1-1-2-1-1">
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #859900; font-weight: bold;">data</span> <span style="color: #b58900;">ToDo</span> <span style="color: #268bd2;">=</span> <span style="color: #b58900;">ToDo</span>
+  { _items <span style="color: #268bd2;">::</span> [<span style="color: #b58900;">Item</span>]
+  , _editText <span style="color: #268bd2;">::</span> <span style="color: #b58900;">String</span>
+  , _filter <span style="color: #268bd2;">::</span> <span style="color: #b58900;">Filter</span>
+  } <span style="color: #859900; font-weight: bold;">deriving</span> <span style="color: #b58900;">Show</span>
+</pre>
+</div>
+
+<p>
+In addition to the model you also need a updating function of type
+<code>mdlEvent -&gt; model -&gt; model</code> which is a left fold function that
+applies a <a href="#model-event">Model Event</a> to the Model resulting in the new Model. This
+function is one of the things you need to construct a <a href="#component">Component</a>.
+</p>
+</div>
+</li>
+<li><a id="fold" name="fold"></a>Fold<br  /><div class="outline-text-6" id="text-1-1-2-1-2">
+<p>
+Here's the model function from our <a href="#sec-1-2-1">todo mvc</a> example:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #268bd2;">process</span> <span style="color: #268bd2;">::</span> <span style="color: #b58900;">Action</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">ToDo</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">ToDo</span>
+<span style="color: #268bd2;">process</span> (<span style="color: #b58900;">NewItem</span> str) todo <span style="color: #268bd2;">=</span> todo <span style="color: #268bd2;">&amp;~</span> <span style="color: #859900; font-weight: bold;">do</span>
+   items <span style="color: #268bd2;">%=</span> (<span style="color: #b58900;">Item</span> str <span style="color: #b58900;">False:</span>)
+   editText <span style="color: #268bd2;">.=</span> <span style="color: #2aa198;">""</span>
+<span style="color: #268bd2;">process</span> (<span style="color: #b58900;">RemoveItem</span> idx) todo <span style="color: #268bd2;">=</span> todo <span style="color: #268bd2;">&amp;</span> items <span style="color: #268bd2;">%~</span> deleteAt idx
+<span style="color: #268bd2;">process</span> (<span style="color: #b58900;">SetEditText</span> str) todo <span style="color: #268bd2;">=</span> todo <span style="color: #268bd2;">&amp;</span> editText <span style="color: #268bd2;">.~</span> str
+<span style="color: #268bd2;">process</span> (<span style="color: #b58900;">SetCompleted</span> idx c) todo <span style="color: #268bd2;">=</span> todo <span style="color: #268bd2;">&amp;</span> items<span style="color: #268bd2;">.</span>element idx<span style="color: #268bd2;">.</span>completed <span style="color: #268bd2;">.~</span> c
+<span style="color: #268bd2;">process</span> (<span style="color: #b58900;">SetFilter</span> f) todo <span style="color: #268bd2;">=</span> todo <span style="color: #268bd2;">&amp;</span> filter <span style="color: #268bd2;">.~</span> f
+</pre>
+</div>
+
+<p>
+Note that MVC, one of the libraries that oHm is built on has a concept
+of a model too. In MVC Model refers to the pure transformation that
+happens within a Pipe and applies an event to the state to produce a
+new state. In oHm construction of an MVC Model happens with the
+<code>appModel</code> function that the <code>runComponent</code> function applies for you.
+</p>
+</div>
+</li></ol>
+</li>
+
+<li><a id="model-event" name="model-event"></a> Model Events<br  /><div class="outline-text-5" id="text-1-1-2-2">
+<p>
+Model Events represent events that happen in your domain to effect
+change to the state of the world. This is the <code>Action</code> type mentioned
+in the <a href="#fold">event -&gt; model -&gt; model</a> function earlier:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #859900; font-weight: bold;">data</span> <span style="color: #b58900;">Action</span>
+  <span style="color: #268bd2;">=</span> <span style="color: #b58900;">NewItem</span> <span style="color: #b58900;">String</span>
+  <span style="color: #268bd2;">|</span> <span style="color: #b58900;">RemoveItem</span> <span style="color: #b58900;">Index</span>
+  <span style="color: #268bd2;">|</span> <span style="color: #b58900;">SetEditText</span> <span style="color: #b58900;">String</span>
+  <span style="color: #268bd2;">|</span> <span style="color: #b58900;">SetCompleted</span> <span style="color: #b58900;">Index</span> <span style="color: #b58900;">Bool</span>
+  <span style="color: #268bd2;">|</span> <span style="color: #b58900;">SetFilter</span> <span style="color: #b58900;">Filter</span>
+</pre>
+</div>
+</div>
+</li>
+
+<li>UI Events<br  /><div class="outline-text-5" id="text-1-1-2-3">
+<p>
+UI Events occur at the points of interaction between user and your
+app. These are the sorts of things that you'd attach callbacks to:
+changes, clicks, mouse moves etc. A <code>DOMEvent</code> type is provided to
+<a href="#sec-1-1-2-5">1.1.2.5</a> for these events.
+</p>
+
+<p>
+For simpler apps, like our <i>todo mvc</i> example, the UI could emit events
+which are passed straight through to the model.
+</p>
+</div>
+</li>
+
+<li>Processors<br  /><div class="outline-text-5" id="text-1-1-2-4">
+<p>
+Processors consume events of one type, say UI Events and produce
+Events of another type, with the ability to perform actions in some
+Monad. These are used to process the UI Events that a Component emits
+into a form that that component's model can use to update its state.
+</p>
+
+<p>
+In our simple <i>todo mvc</i> example, as we're using the same type for UI
+Events and Model Event, there's no processing and events are just
+passed straight through using the <code>idProcessor</code>.
+</p>
+</div>
+</li>
+
+<li>Renderers<br  /><div class="outline-text-5" id="text-1-1-2-5">
+<p>
+A Renderer is a function of type <code>DOMEvent a -&gt; model -&gt; HTML</code> where
+HTML is a virtual-dom representation of the UI.
+</p>
+
+<p>
+This is the top level <code>Renderer</code> from  <i>todo mvc</i>:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #268bd2;">todoView</span> <span style="color: #268bd2;">::</span> <span style="color: #b58900;">DOMEvent</span> <span style="color: #b58900;">Action</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">ToDo</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">HTML</span>
+<span style="color: #268bd2;">todoView</span> chan todo<span style="color: #268bd2;">@</span>(<span style="color: #b58900;">ToDo</span> itemList _txtEntry currentFilter) <span style="color: #268bd2;">=</span>
+  with div
+    (classes <span style="color: #268bd2;">.=</span> [<span style="color: #2aa198;">"body"</span>])
+    [ titleRender, itemsRender, renderFilters chan todo]
+  <span style="color: #859900; font-weight: bold;">where</span>
+  titleRender <span style="color: #268bd2;">=</span> with h1 (classes <span style="color: #268bd2;">.=</span> [<span style="color: #2aa198;">"title"</span>]) [<span style="color: #2aa198;">"todos"</span>]
+  itemsRender <span style="color: #268bd2;">=</span> with ul (classes <span style="color: #268bd2;">.=</span> [<span style="color: #2aa198;">"items"</span>])
+    (newItem chan todo <span style="color: #b58900;">:</span> (<span style="color: #b58900;">P</span><span style="color: #268bd2;">.</span>map (renderItem chan) <span style="color: #268bd2;">$</span> zip [0<span style="color: #268bd2;">..</span>] filteredItems))
+  filteredItems <span style="color: #268bd2;">=</span> filterItems currentFilter itemList
+</pre>
+</div>
+
+<p>
+In this example <code>renderFilters</code>, <code>newItem</code>, and <code>renderItem</code> are all
+<code>Renderers</code> that each render a sub part of the UI
+</p>
+
+<p>
+One other point of interest is how <code>DOMEvents</code> work if we take the
+example of onInput:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #268bd2;">onInput</span> <span style="color: #268bd2;">::</span> <span style="color: #b58900;">MonadState</span> <span style="color: #b58900;">HTML</span> m <span style="color: #268bd2;">=&gt;</span> <span style="color: #b58900;">DOMEvent</span> <span style="color: #b58900;">String</span> <span style="color: #268bd2;">-&gt;</span> m <span style="color: #b58900;">()</span>
+</pre>
+</div>
+
+<p>
+In our <code>newItem</code> Renderer
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #268bd2;">newItem</span> <span style="color: #268bd2;">::</span> <span style="color: #b58900;">DOMEvent</span> <span style="color: #b58900;">Action</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">ToDo</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">HTML</span>  
+<span style="color: #268bd2;">newItem</span> chan todo <span style="color: #268bd2;">=</span>
+  with li (classes <span style="color: #268bd2;">.=</span> [<span style="color: #2aa198;">"newItem"</span>])
+    [ into form
+      [ with input (<span style="color: #859900; font-weight: bold;">do</span>
+             attrs <span style="color: #268bd2;">.</span> at <span style="color: #2aa198;">"placeholder"</span> <span style="color: #268bd2;">?=</span> <span style="color: #2aa198;">"Create a new task"</span>
+             props <span style="color: #268bd2;">.</span> at <span style="color: #2aa198;">"value"</span> <span style="color: #268bd2;">?=</span> value
+             onInput <span style="color: #268bd2;">$</span> contramap <span style="color: #b58900;">SetEditText</span> chan)
+             <span style="color: #b58900;">[]</span>
+        , with (btn click <span style="color: #2aa198;">"Create"</span>) (attrs <span style="color: #268bd2;">.</span> at <span style="color: #2aa198;">"hidden"</span> <span style="color: #268bd2;">?=</span> <span style="color: #2aa198;">"true"</span>) [<span style="color: #2aa198;">"Create"</span>]
+      ]
+    ]
+  <span style="color: #859900; font-weight: bold;">where</span>
+  value <span style="color: #268bd2;">=</span> (todo <span style="color: #268bd2;">^.</span> editText<span style="color: #268bd2;">.</span>to toJSString)
+  click <span style="color: #268bd2;">=</span> (const <span style="color: #268bd2;">$</span> (channel chan) <span style="color: #268bd2;">$</span> <span style="color: #b58900;">NewItem</span> (todo <span style="color: #268bd2;">^.</span> editText))
+</pre>
+</div>
+
+<p>
+we only have a <code>DOMEvent Action</code> available to accept UI Events,
+whereas onInput takes a <code>DOMEvent String</code> so we need to adapt the
+<code>DOMEvent</code> passed to <code>newItem</code> to be one that takes a <code>String</code> for
+passing to <code>onInput</code>. <code>DOMEvent</code> happens to be an instance of the
+<code>Contravariant</code> class. You can thing of the <code>contramap</code> function being
+like an <code>fmap</code>, but applying its function to the input of something
+rather than the content.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #268bd2;">f</span> <span style="color: #268bd2;">::</span> <span style="color: #b58900;">String</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">Action</span>
+<span style="color: #268bd2;">f</span> <span style="color: #268bd2;">=</span> <span style="color: #b58900;">SetEditText</span>
+<span style="color: #586e75;">-- </span><span style="color: #586e75;">We have a DOMEvent Action</span>
+<span style="color: #586e75;">-- </span><span style="color: #586e75;">We want a DOMEvent String</span>
+<span style="color: #586e75;">-- </span><span style="color: #586e75;">fmap   :: (a -&gt; b) -&gt; f a -&gt; f b </span>
+<span style="color: #268bd2;">contramap</span> <span style="color: #268bd2;">::</span> (a <span style="color: #268bd2;">-&gt;</span> b) <span style="color: #268bd2;">-&gt;</span> f b <span style="color: #268bd2;">-&gt;</span> f a
+<span style="color: #268bd2;">contramap</span> <span style="color: #268bd2;">::</span> (<span style="color: #b58900;">String</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">Action</span>) <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">DOMEvent</span> <span style="color: #b58900;">Action</span> <span style="color: #268bd2;">-&gt;</span> <span style="color: #b58900;">DOMEvent</span> <span style="color: #b58900;">String</span>
+</pre>
+</div>
+</div>
+</li>
+<li><a id="component" name="component"></a> Components<br  /><div class="outline-text-5" id="text-1-1-2-6">
+<p>
+A component packages up the three things that you provide into
+something that the framework can run, with an extra environment in
+<code>ReaderT</code> that the processor can use within its actions to route
+events that have an external effect (for example REST requests or
+socket.io calls)
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #268bd2;">modelComp</span> <span style="color: #268bd2;">::</span> <span style="color: #b58900;">Component</span> <span style="color: #b58900;">()</span> <span style="color: #b58900;">Action</span> <span style="color: #b58900;">ToDo</span> <span style="color: #b58900;">Action</span>
+<span style="color: #268bd2;">modelComp</span> <span style="color: #268bd2;">=</span> <span style="color: #b58900;">Component</span> process todoView idProcessor
+
+<span style="color: #268bd2;">main</span> <span style="color: #268bd2;">::</span> <span style="color: #b58900;">IO</span> <span style="color: #b58900;">()</span>
+<span style="color: #268bd2;">main</span> <span style="color: #268bd2;">=</span> void <span style="color: #268bd2;">$</span> runComponent initialToDo <span style="color: #b58900;">()</span> modelComp
+</pre>
+</div>
+</div>
+</li></ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Examples</h3>
+<div class="outline-text-3" id="text-1-2">
+</div><div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> Todo MVC</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+<a href="http://todomvc.com/">http://todomvc.com/</a>
+The canonnical TODO MVC example demonstrates the basic moving parts of
+oHm
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> Socket.IO Chat</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+The socket.io example is a bit more involved and adds some new
+concepts illustrating nesting components by adapting the types of processors
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Ben Ford</p>
+<p class="date">Created: 2015-01-13 Tue 08:44</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
