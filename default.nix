@@ -11,7 +11,7 @@ cabal.mkDerivation (self: {
     profunctors stm time
   ];
   meta = {
-    license = self.stdenv.lib.licenses.unfree;
+    license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
   };
 })

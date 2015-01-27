@@ -5,7 +5,8 @@ name:                oHm
 version:             0.1.0.0
 author:              Ben Ford
 maintainer:          ben@perurbis.com
-copyright:           Ben Ford 2014
+copyright:           Ben Ford 2014–2015
+license:             BSD3
 license-file:        LICENSE.txt
 -- category:
 build-type:          Simple
