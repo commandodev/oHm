@@ -1,3 +1,4 @@
+#+OPTIONS: toc:nil n:0 h:3
 * oHm Om with Haskell in the middle
 
 Om is awesome. oHm is a hommage to Om in GHCJS using Haskell's pipes,
@@ -25,11 +26,10 @@ data ToDo = ToDo
 
 In addition to the model you also need a updating function of type
 =mdlEvent -> model -> model= which is a left fold function that
-applies a [[Model Event]] to the Model resulting in the new Model. This
-function is one of the things you need to construct a [[Component]].
+applies a [[model-event][Model Event]] to the Model resulting in the new Model. This
+function is one of the things you need to construct a [[component][Component]].
 
-<<model-fold>>
-***** Fold
+***** <<fold>>Fold
 Here's the model function from our [[Todo MVC][todo mvc]] example:
 
 #+BEGIN_SRC haskell
@@ -51,10 +51,10 @@ new state. In oHm construction of an MVC Model happens with the
 =appModel= function that the =runComponent= function applies for you.
 
 
-**** Model Events
+**** <<model-event>> Model Events
 Model Events represent events that happen in your domain to effect
 change to the state of the world. This is the =Action= type mentioned
-in the [[model-fold][event -> model -> model]] function earlier:
+in the [[fold][event -> model -> model]] function earlier:
 
 #+BEGIN_SRC haskell
 
@@ -72,7 +72,7 @@ app. These are the sorts of things that you'd attach callbacks to:
 changes, clicks, mouse moves etc. A =DOMEvent= type is provided to
 [[Renderers]] for these events.
 
-For simpler apps, like our [[ToDo MVC][todo mvc]] example, the UI could emit events
+For simpler components, like our [[ToDo MVC][todo mvc]] example, the UI could emit events
 which are passed straight through to the model.
 **** Processors
 Processors consume events of one type, say UI Events and produce
@@ -82,7 +82,7 @@ into a form that that component's model can use to update its state.
 
 In our simple [[ToDo MVC][todo mvc]] example, as we're using the same type for UI
 Events and Model Event, there's no processing and events are just
-passed straight through using the idProcessor.
+passed straight through using the =idProcessor=.
 **** Renderers
 A Renderer is a function of type =DOMEvent a -> model -> HTML= where
 HTML is a virtual-dom representation of the UI.
@@ -154,10 +154,10 @@ rather than the content.
 
 #+END_SRC
 
-**** Components
+**** <<component>> Components
 A component packages up the three things that you provide into
 something that the framework can run, with an extra environment in
-=ReaderT= that the processor can use within it's actions to route
+=ReaderT= that the processor can use within its actions to route
 events that have an external effect (for example REST requests or
 socket.io calls)
 
