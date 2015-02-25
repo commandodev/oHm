@@ -12,7 +12,7 @@ module Ohm.Internal.HTML
   , text
   , with
   , into
-
+  , setKey
   , onClick
   , onChange
   , onInput
@@ -173,6 +173,9 @@ foreign import javascript safe
 foreign import javascript safe
   "if ($1.type == 'VirtualNode') { $r = new VNode($1.tagName, $1.properties, $2); } else { $r = $1; }" setVNodeChildren :: HTML -> JSArray a -> HTML
 
+foreign import javascript safe
+  "if ($1.type == 'VirtualNode') { $r = new VNode($1.tagName, $1.properties, $1.children, $2); } else { $r = $1; }" setVNodeKey :: HTML -> JSString -> HTML
+
 attrs :: Traversal' HTML Immutable.Map
 attrs f n
   | fromJSBool (isVNode n) = f (vNodeGetAttributes n) <&> vNodeSetAttributes n
@@ -182,6 +185,10 @@ props :: Traversal' HTML Immutable.Map
 props f n
   | fromJSBool (isVNode n) = f (vNodeGetProperties n) <&> vNodeSetProperties n
   | otherwise = pure n
+
+-- key :: Traversal' HTML String
+-- key f n
+--   | fromJSBool (isVNode n) = f
 
 classes :: Traversal' HTML [String]
 classes = attrs . at "class" . anon "" (isEmptyStr . fromJSString) . iso (words . fromJSString) (toJSString . unwords)
@@ -202,7 +209,7 @@ foreign import javascript safe
   vNodeGetProperties :: HTML -> Immutable.Map
 
 foreign import javascript safe
-  "new VNode($1.tagName, $2.toJS(), $1.children)"
+  "new VNode($1.tagName, $2.toJS(), $1.children, $1.key)"
   vNodeSetProperties :: HTML -> Immutable.Map -> HTML
 
 
@@ -211,27 +218,30 @@ foreign import javascript safe
   vNodeGetAttributes :: HTML -> Immutable.Map
 
 foreign import javascript safe
-  "new VNode($1.tagName, Immutable.Map($1.properties).set('attributes', $2).toJS(), $1.children)"
+  "new VNode($1.tagName, Immutable.Map($1.properties).set('attributes', $2).toJS(), $1.children, $1.key)"
   vNodeSetAttributes :: HTML -> Immutable.Map -> HTML
 
 foreign import javascript unsafe
   "$1.preventDefault();" preventDefault :: JSRef a -> IO ()
 
 foreign import javascript safe
-  "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-click', evHook($2)).toJS(), $1.children)"
+  "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-click', evHook($2)).toJS(), $1.children, $1.key)"
   vnodeSetClickEv :: HTML -> JSRef a -> HTML
 
 foreign import javascript safe
-  "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-change', evHook($2)).toJS(), $1.children)"
+  "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-change', evHook($2)).toJS(), $1.children, $1.key)"
   vnodeSetChangeEv :: HTML -> JSRef a -> HTML
 
 
 foreign import javascript safe
-  "new VNode($1.tagName, Immutable.Map($1.properties).set('name', 'stub').set('ev-input', evHook(changeEvent($2))).toJS(), $1.children)"
+  "new VNode($1.tagName, Immutable.Map($1.properties).set('name', 'stub').set('ev-input', evHook(changeEvent($2))).toJS(), $1.children, $1.key)"
   vnodeSetInputEv :: HTML -> JSRef a -> HTML
 
 foreign import javascript safe
   "$1.stub" getStubValue :: JSRef a -> JSString
+
+setKey :: (MonadState HTML m, ToJSString s) => s -> m ()
+setKey = modify . flip setVNodeKey . toJSString
 
 onClick :: MonadState HTML m => DOMEvent () -> m ()
 onClick = modify . (setDOMEvent vnodeSetClickEv $ void . preventDefault)
