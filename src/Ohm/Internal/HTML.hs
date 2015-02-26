@@ -15,6 +15,7 @@ module Ohm.Internal.HTML
   , setKey
   , onClick
   , onChange
+  , onKeyDown
   , onInput
   , renderTo
   , newTopLevelContainer
@@ -36,6 +37,7 @@ import GHCJS.DOM.Document
 import GHCJS.DOM.Element
 import GHCJS.DOM.Node
 import GHCJS.Foreign
+import GHCJS.Prim (fromJSInt)
 import GHCJS.Types
 import qualified Ohm.Internal.Immutable as Immutable
 import Prelude hiding (div, head, map, mapM, sequence, span)
@@ -232,6 +234,9 @@ foreign import javascript safe
   "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-change', evHook($2)).toJS(), $1.children, $1.key)"
   vnodeSetChangeEv :: HTML -> JSRef a -> HTML
 
+foreign import javascript safe
+  "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-keydown', evHook($2)).toJS(), $1.children, $1.key)"
+  vnodeSetKeyDownEv :: HTML -> JSRef a -> HTML
 
 foreign import javascript safe
   "new VNode($1.tagName, Immutable.Map($1.properties).set('name', 'stub').set('ev-input', evHook(changeEvent($2))).toJS(), $1.children, $1.key)"
@@ -239,6 +244,9 @@ foreign import javascript safe
 
 foreign import javascript safe
   "$1.stub" getStubValue :: JSRef a -> JSString
+
+foreign import javascript safe
+  "$1.keyCode" getKeyCode :: JSRef a -> Int
 
 setKey :: (MonadState HTML m, ToJSString s) => s -> m ()
 setKey = modify . flip setVNodeKey . toJSString
@@ -248,6 +256,9 @@ onClick = modify . (setDOMEvent vnodeSetClickEv $ void . preventDefault)
 
 onChange :: MonadState HTML m => DOMEvent () -> m ()
 onChange = modify . (setDOMEvent vnodeSetChangeEv $ void . preventDefault)
+
+onKeyDown :: MonadState HTML m => DOMEvent Int -> m ()
+onKeyDown = modify . (setDOMEvent vnodeSetKeyDownEv $ fmap fromJSInt . getProp ("keyCode" :: String))
 
 onInput :: MonadState HTML m => DOMEvent String -> m ()
 onInput = modify . (setDOMEvent vnodeSetInputEv $ return . fromJSString . getStubValue)
