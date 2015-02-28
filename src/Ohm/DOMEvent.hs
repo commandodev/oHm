@@ -1,4 +1,4 @@
-module Ohm.Internal.DOMEvent (
+module Ohm.DOMEvent (
     DOMEvent(..)
   , domChannel
   , clickChannel
