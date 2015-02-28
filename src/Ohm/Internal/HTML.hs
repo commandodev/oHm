@@ -15,7 +15,7 @@ module Ohm.Internal.HTML
   , setKey
   , onClick
   , onChange
-  , onKeyDown
+  , onKeypress
   , onInput
   , renderTo
   , newTopLevelContainer
@@ -235,8 +235,8 @@ foreign import javascript safe
   vnodeSetChangeEv :: HTML -> JSRef a -> HTML
 
 foreign import javascript safe
-  "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-keydown', evHook($2)).toJS(), $1.children, $1.key)"
-  vnodeSetKeyDownEv :: HTML -> JSRef a -> HTML
+  "new VNode($1.tagName, Immutable.Map($1.properties).set('ev-keypress', evHook($2)).toJS(), $1.children, $1.key)"
+  vnodeSetKeypressEv :: HTML -> JSRef a -> HTML
 
 foreign import javascript safe
   "new VNode($1.tagName, Immutable.Map($1.properties).set('name', 'stub').set('ev-input', evHook(changeEvent($2))).toJS(), $1.children, $1.key)"
@@ -257,8 +257,8 @@ onClick = modify . (setDOMEvent vnodeSetClickEv $ void . preventDefault)
 onChange :: MonadState HTML m => DOMEvent () -> m ()
 onChange = modify . (setDOMEvent vnodeSetChangeEv $ void . preventDefault)
 
-onKeyDown :: MonadState HTML m => DOMEvent Int -> m ()
-onKeyDown = modify . (setDOMEvent vnodeSetKeyDownEv $ fmap fromJSInt . getProp ("keyCode" :: String))
+onKeypress :: MonadState HTML m => DOMEvent Int -> m ()
+onKeypress = modify . (setDOMEvent vnodeSetKeypressEv $ return . getKeyCode)
 
 onInput :: MonadState HTML m => DOMEvent String -> m ()
 onInput = modify . (setDOMEvent vnodeSetInputEv $ return . fromJSString . getStubValue)
