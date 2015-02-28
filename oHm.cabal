@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                oHm
-version:             0.1.0.0
+version:             0.1.0.1
 author:              Ben Ford
 maintainer:          ben@perurbis.com
 copyright:           Ben Ford 2014–2015
@@ -15,43 +15,36 @@ cabal-version:       >=1.10
 
 Library
   exposed-modules:
-       Ohm.Component
-     , Ohm.HTML
-     , Ohm.SocketIO
-     , Ohm.XHRIO
-     , Ohm.Internal.HTML
-     , Ohm.Internal.DOMEvent
-     , Ohm.Internal.Immutable
+    Ohm.Component
+    Ohm.HTML
+    Ohm.SocketIO
+    Ohm.XHRIO
+    Ohm.DOMEvent
+  ghc-options: -Wall
   -- other-modules:
   other-extensions:    ForeignFunctionInterface, GeneralizedNewtypeDeriving, OverloadedStrings
-  build-depends:       base >=4.7 && <4.8
-                     , aeson > 0.8
-                     , bytestring >= 0.10.4.1
-                     , containers >=0.5 && <0.6
-                     , contravariant >= 1.2
-                     , ghcjs-base >= 0.1
-                     , ghcjs-dom >=0.1.1.1
-                     , ghcjs-prim >= 0.1.0.0
-                     , lens >= 4.6.0.1
-                     , mtl >= 2.2.1
-                     , mvc >= 1.0.1
-                     , pipes >= 4.0
-                     , pipes-concurrency >= 2.0
-                     , profunctors >= 4.3.2
-                     , split >= 0.2.2
-                     , stm >=2.4 && <2.5
-                     , time > 1.4
-                     , transformers >= 0.4.1.0
+  build-depends:
+      base >=4.7 && <5
+    , aeson > 0.8
+    , bytestring >= 0.10.4.1
+    , containers >=0.5 && <0.6
+    , contravariant >= 1.2
+    , ghcjs-base >= 0.1
+    , ghcjs-dom >=0.1.1.1
+    , ghcjs-prim >= 0.1.0.0
+    , lens >= 4.6.0.1
+    , mtl >= 2.2.1
+    , mvc >= 1.0.1
+    , pipes >= 4.0
+    , pipes-concurrency >= 2.0
+    , profunctors >= 4.3.2
+    , split >= 0.2.2
+    , stm >=2.4 && <2.5
+    , time > 1.4
+    , transformers >= 0.4.1.0
+    , virtual-dom
   hs-source-dirs:      src
-  js-sources:        vendor/change-event.js
-                   , vendor/dom-delegator.js
-                   , vendor/ev-hook.js
-                   , vendor/h.js
-                   , vendor/immutable.min.js
-                   , vendor/socket.io.js
-                   , vendor/underscore-min.js
-                   , vendor/vdom.js
-                   , vendor/virtualdom.js
-                   , vendor/vnode.js
-                   , vendor/vtext.js
+  js-sources:        
+    vendor/socket.io.js
+    vendor/underscore-min.js
   default-language:    Haskell2010

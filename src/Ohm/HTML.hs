@@ -1,5 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Ohm.HTML
   ( -- * bootstrap operators
     bootstrapEl
@@ -14,21 +16,22 @@ module Ohm.HTML
     
     -- * Re-exported modules
   , module Control.Applicative
-  , module Ohm.Internal.HTML
-  , module Ohm.Internal.DOMEvent
+  , module VirtualDom
+  , module Ohm.DOMEvent
   , lmap, dimap
   ) where
-import Prelude hiding (div, head, map, mapM, sequence, span)
-import Ohm.Internal.HTML
-import Ohm.Internal.DOMEvent
+import Control.Lens hiding (aside, children, coerce, pre)
+import GHCJS.Foreign
+import VirtualDom
+import VirtualDom.Prim
+import Ohm.DOMEvent
 import Control.Applicative
-import Control.Lens
 --import Data.Profunctor
 
 type Renderer edom model = DOMEvent edom -> model -> HTML
 
 bootstrapEl :: String -> [HTML] -> HTML
-bootstrapEl cls = with div (classes .= [cls])
+bootstrapEl cls = with div_ (classes .= [cls])
 
 bsCol :: Int -> [HTML] -> HTML
 bsCol n = bootstrapEl $ "col-sm-" ++ (show n)
@@ -40,12 +43,12 @@ col3 = bsCol 3
 col6 = bsCol 6
 col9 = bsCol 9
 
-mkButton :: (() -> IO ()) -> HTML -> [String] -> HTML
+mkButton :: IO () -> HTML -> [String] -> HTML
 mkButton msgAction btnTxt classList = 
-  with button
+  with button_
     (do
        classes .= ["button", "btn"] ++ classList
-       onClick $ DOMEvent msgAction)
+       on "click" msgAction)
     [btnTxt]
            
 embedRenderer :: Renderer subE subM -> Prism' e subE -> Lens' m subM -> Renderer e m
@@ -53,3 +56,7 @@ embedRenderer subRenderer prsm l evt mdl = subRenderer converted focussed
   where
     converted = contramap (review prsm) evt 
     focussed = mdl ^. l
+
+classes :: Traversal' HTMLElement [String]
+classes = attributes . at "class" . anon "" (isEmptyStr . fromJSString) . iso (words . fromJSString) (toJSString . unwords)
+  where isEmptyStr = (== ("" :: String))

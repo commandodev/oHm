@@ -23,7 +23,6 @@ import Data.Foldable (traverse_)
 import Data.Profunctor
 import MVC hiding (handles)
 import Ohm.HTML (Renderer, domChannel, newTopLevelContainer, renderTo)
-import Pipes ((~>))
 
 -- | Converts @UI Events@ to @Model Events@ in a monad for external communication
 --
@@ -97,8 +96,8 @@ runComponent'
   -> IO (Output ein)
   -- ^ Returns an 'Output' that accepts @Model Events@ from external systems
 runComponent' dbg s env Component{..} = do
-  (domSink, domSource) <- spawn Unbounded
-  (modelSink, modelSource) <- spawn Unbounded
+  (domSink, domSource) <- spawn unbounded
+  (modelSink, modelSource) <- spawn unbounded
   
   runEvents $ for (fromInput domSource) (runProcessor domEventsProcessor)
            >-> (toOutput modelSink)
