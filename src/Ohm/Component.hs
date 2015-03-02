@@ -16,7 +16,7 @@ module Ohm.Component
   , runComponentDebug
   ) where
 
-import Control.Lens (Prism', preview)
+import Control.Lens -- (Prism', preview)
 import Control.Monad.Trans.Reader
 import Control.Monad.State
 import Data.Foldable (traverse_)
@@ -139,3 +139,10 @@ runComponent
   -> Component env ein model edom
   -> IO (Output ein)      
 runComponent = runComponent' (void . return)
+
+data Test = Test {
+    _a :: String
+  , _b :: Int
+  } deriving Show
+  
+makeLenses ''Test
