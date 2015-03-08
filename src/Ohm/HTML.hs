@@ -42,17 +42,18 @@ import GHCJS.DOM.Types (GObject, toGObject, unsafeCastGObject)
 import GHCJS.DOM.UIEvent
 import VirtualDom
 import VirtualDom.Prim
+import qualified VirtualDom.HTML.Attributes as A
 import Ohm.DOMEvent
 import Control.Applicative
 --import Data.Profunctor
 
 type Renderer edom model = DOMEvent edom -> model -> HTML
 
-bootstrapEl :: String -> [HTML] -> HTML
-bootstrapEl cls = with div_ (classes .= [cls])
+bootstrapEl :: JSString -> [HTML] -> HTML
+bootstrapEl cls = with div_ (A.classes .= [cls])
 
 bsCol :: Int -> [HTML] -> HTML
-bsCol n = bootstrapEl $ "col-sm-" ++ (show n)
+bsCol n = bootstrapEl . toJSString $ "col-sm-" ++ (show n)
 
 container, row, col3, col6, col9 :: [HTML] -> HTML
 container = bootstrapEl "container"
@@ -61,11 +62,11 @@ col3 = bsCol 3
 col6 = bsCol 6
 col9 = bsCol 9
 
-mkButton :: (JSRef Event -> IO ()) -> HTML -> [String] -> HTML
+mkButton :: (JSRef Event -> IO ()) -> HTML -> [JSString] -> HTML
 mkButton msgAction btnTxt classList = 
   with button_
     (do
-       classes .= ["button", "btn"] ++ classList
+       A.classes .= ["button", "btn"] ++ classList
        on "click" msgAction)
     [btnTxt]
            

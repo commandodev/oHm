@@ -14,6 +14,7 @@ module Ohm.Component
   , appModel
   , runComponent
   , runComponentDebug
+  , forkProcessor
   ) where
 
 import Control.Lens (Prism', preview)
@@ -99,15 +100,11 @@ runComponent' dbg s env Component{..} = do
   (domSink, domSource) <- spawn unbounded
   (modelSink, modelSource) <- spawn unbounded
   
-  runEvents $ for (fromInput domSource) (runProcessor domEventsProcessor)
+  forkProcessor env $ for (fromInput domSource) (runProcessor domEventsProcessor)
            >-> (toOutput modelSink)
   void . forkIO . void $ runMVC s (appModel model) $ app modelSource domSink
   return modelSink
   where
-    -- Run the event processor over the events produced by the dom
-    runEvents :: Effect (ReaderT env IO) () -> IO ()
-    runEvents = void . forkIO . (flip runReaderT $ env) . runEffect
-    
     -- Create an MVC app
     app :: Input ein -> Output edom -> Managed (View model, Controller ein)
     app eventSource domSink = managed $ \k -> do
@@ -139,3 +136,8 @@ runComponent
   -> Component env ein model edom
   -> IO (Output ein)      
 runComponent = runComponent' (void . return)
+
+
+-- Run the event processor over the events produced by the dom
+forkProcessor :: env -> Effect (ReaderT env IO) () -> IO ()
+forkProcessor env = void . forkIO . (flip runReaderT $ env) . runEffect
