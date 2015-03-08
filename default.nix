@@ -1,16 +1,17 @@
-{ mkDerivation, aeson, base, bytestring, containers, contravariant
-, ghcjs-base, ghcjs-dom, ghcjs-prim, lens, mtl, mvc, pipes
-, pipes-concurrency, profunctors, split, stdenv, stm, time
-, transformers, virtual-dom
+{ cabal, aeson, ghcjsBase, ghcjsDom, ghcjsPrim, virtualDom, lens, mvc, pipes
+, pipesConcurrency, profunctors, stm, time
 }:
-mkDerivation {
+
+cabal.mkDerivation (self: {
   pname = "oHm";
-  version = "0.1.0.1";
+  version = "0.1.0.0";
   src = ./.;
   buildDepends = [
-    aeson base bytestring containers contravariant ghcjs-base ghcjs-dom
-    ghcjs-prim lens mtl mvc pipes pipes-concurrency profunctors split
-    stm time transformers virtual-dom
+    aeson ghcjsBase ghcjsDom ghcjsPrim virtualDom lens mvc pipes pipesConcurrency
+    profunctors stm time
   ];
-  license = stdenv.lib.licenses.bsd3;
-}
+  meta = {
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+  };
+})

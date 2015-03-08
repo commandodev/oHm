@@ -20,6 +20,7 @@ Library
     Ohm.SocketIO
     Ohm.XHRIO
     Ohm.DOMEvent
+    Ohm.KeyMaster
   ghc-options: -Wall
   -- other-modules:
   other-extensions:    ForeignFunctionInterface, GeneralizedNewtypeDeriving, OverloadedStrings
@@ -47,4 +48,5 @@ Library
   js-sources:        
     vendor/socket.io.js
     vendor/underscore-min.js
+    vendor/keymaster.js
   default-language:    Haskell2010

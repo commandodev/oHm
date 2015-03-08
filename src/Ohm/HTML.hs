@@ -12,6 +12,8 @@ module Ohm.HTML
   , mkButton
   , embedRenderer
   
+  , preventDefault
+  
     -- * Callbacks
   , onClick
   , onChange
@@ -72,11 +74,6 @@ embedRenderer subRenderer prsm l evt mdl = subRenderer converted focussed
   where
     converted = contramap (review prsm) evt 
     focussed = mdl ^. l
-
-classes :: Traversal' HTMLElement [String]
-classes = attributes . at "class" . anon "" (isEmptyStr . fromJSString) . iso (words . fromJSString) (toJSString . unwords)
-  where isEmptyStr = (== ("" :: String))
-
 
 preventDefault :: JSRef Event -> IO ()
 preventDefault evt = traverse_ eventPreventDefault =<< fromJSRef evt

@@ -1,10 +1,19 @@
-with (import <nixpkgs> {}).pkgs;
-let
-    hsPackages = haskell-ng.packages.ghcjs.override {
-      overrides = self: super: {
-        virtual-dom = self.callPackage ./virtual-dom {};
+{ }:
+
+with import <nixpkgs> {};
+let haskellPackages = pkgs.haskellPackages_ghcjs.override {
+      extension = self: super: {
+        virtualDom = self.callPackage ./virtual-dom {};
         oHm = self.callPackage ./. {};
       };
     };
-in
-  hsPackages.oHm.env
+
+in pkgs.callPackage ./. {
+     cabal = haskellPackages.cabal.override {
+       extension = self: super: {
+         buildTools = super.buildTools ++ [ haskellPackages.ghc.ghc.parent.cabalInstall ];
+       };
+     };
+     inherit (haskellPackages) aeson ghcjsBase ghcjsDom ghcjsPrim virtualDom lens mvc pipes
+                               pipesConcurrency profunctors stm time;
+   }
