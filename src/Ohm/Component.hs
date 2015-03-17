@@ -12,6 +12,7 @@ module Ohm.Component
   , handles
   , Component(..)
   , appModel
+  , runComponent'
   , runComponent
   , runComponentDebug
   , forkProcessor
@@ -116,8 +117,9 @@ runComponent' dbg s env Component{..} = do
     -- Render the current model by patching the DOM
     -- debugRender :: (model -> HTML) -> VNodePresentation -> model -> IO ()
     debugRender f el mdl = do
-      dbg mdl
       renderTo el $ f mdl
+      dbg mdl
+      
 
 -- | 'runComponent'' printing the model at each modification
 runComponentDebug
